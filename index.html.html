@@ -1,0 +1,4399 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Next.js Roadmap</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        background: #13131a;
+        transition: background 0.3s;
+      }
+      body.light-mode {
+        background: #ffffff;
+      }
+      /* ── Theme Tokens ── */
+      .roadmap {
+        --rm-bg: #ffffff;
+        --rm-bg-secondary: #fafafc;
+        --rm-bg-tertiary: #f2f3f6;
+        --rm-text: #1a1a1a;
+        --rm-text-secondary: #4a4a55;
+        --rm-text-tertiary: #888;
+        --rm-border: #e2e2e6;
+        --rm-border-hover: #c5c5cc;
+        --rm-code-bg: rgba(0, 0, 0, 0.055);
+        --rm-shadow: rgba(0, 0, 0, 0.04);
+        --rm-shadow-lg: rgba(0, 0, 0, 0.05);
+        --rm-pre-bg: #1a1b26;
+        --rm-pre-border: rgba(255, 255, 255, 0.06);
+        --rm-keypoints-bg: #f2f3f6;
+        --rm-keypoints-border: #e5e5ea;
+        --rm-toggle-bg: #eeeef0;
+        --rm-toggle-knob: #fff;
+      }
+      .roadmap.dark {
+        --rm-bg: #13131a;
+        --rm-bg-secondary: #1a1a24;
+        --rm-bg-tertiary: #20202c;
+        --rm-text: #e4e4ed;
+        --rm-text-secondary: #9d9dac;
+        --rm-text-tertiary: #6b6b7a;
+        --rm-border: #2a2a38;
+        --rm-border-hover: #3d3d50;
+        --rm-code-bg: rgba(255, 255, 255, 0.07);
+        --rm-shadow: rgba(0, 0, 0, 0.2);
+        --rm-shadow-lg: rgba(0, 0, 0, 0.3);
+        --rm-pre-bg: #0f0f18;
+        --rm-pre-border: rgba(255, 255, 255, 0.05);
+        --rm-keypoints-bg: #1a1a24;
+        --rm-keypoints-border: #2a2a38;
+        --rm-toggle-bg: #2a2a38;
+        --rm-toggle-knob: #3d3d50;
+      }
+
+      /* ── Base ── */
+      .roadmap {
+        padding: 28px 20px;
+        min-height: 100vh;
+        box-sizing: border-box;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        line-height: 1.6;
+        color: var(--rm-text);
+        background: var(--rm-bg);
+        transition:
+          background 0.3s,
+          color 0.3s;
+      }
+
+      .theme-bar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 0 22px 12px;
+        gap: 10px;
+      }
+      .theme-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--rm-text-tertiary);
+        transition: color 0.3s;
+      }
+      .theme-switch {
+        position: relative;
+        width: 52px;
+        height: 28px;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .theme-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+      }
+      .theme-slider {
+        position: absolute;
+        inset: 0;
+        background: var(--rm-toggle-bg);
+        border-radius: 28px;
+        transition: background 0.3s;
+        display: flex;
+        align-items: center;
+        padding: 0 5px;
+        justify-content: space-between;
+      }
+      .theme-slider .icon {
+        font-size: 13px;
+        line-height: 1;
+        z-index: 1;
+        transition: opacity 0.25s;
+      }
+      .theme-slider .icon-sun {
+        opacity: 1;
+      }
+      .theme-slider .icon-moon {
+        opacity: 0.5;
+      }
+      .roadmap.dark .theme-slider .icon-sun {
+        opacity: 0.5;
+      }
+      .roadmap.dark .theme-slider .icon-moon {
+        opacity: 1;
+      }
+      .theme-slider::after {
+        content: "";
+        position: absolute;
+        left: 3px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--rm-toggle-knob);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+        transition:
+          transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          background 0.3s;
+      }
+      .theme-switch input:checked + .theme-slider::after {
+        transform: translateX(24px);
+      }
+
+      .phase {
+        margin-bottom: 32px;
+        border-radius: 14px;
+        border: 1px solid var(--rm-border);
+        overflow: hidden;
+        box-shadow: 0 1px 3px var(--rm-shadow);
+        background: var(--rm-bg);
+        transition:
+          border-color 0.3s,
+          box-shadow 0.3s,
+          background 0.3s;
+      }
+      .phase-header {
+        padding: 16px 22px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+        user-select: none;
+        transition: opacity 0.15s;
+      }
+      .phase-header:hover {
+        opacity: 0.88;
+      }
+      .phase-num {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+      .phase-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--rm-text);
+        flex: 1;
+        letter-spacing: -0.2px;
+        transition: color 0.3s;
+      }
+      .phase-tag {
+        font-size: 12.5px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .chevron {
+        font-size: 13px;
+        color: var(--rm-text-tertiary);
+        transition:
+          transform 0.2s,
+          color 0.3s;
+      }
+      .chevron.open {
+        transform: rotate(180deg);
+      }
+      .progress-bar {
+        height: 5px;
+        background: var(--rm-border);
+        margin: 0 22px 16px;
+        border-radius: 3px;
+        transition: background 0.3s;
+      }
+      .progress-fill {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.3s;
+      }
+
+      .phase-body {
+        padding: 0 22px 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .phase-body.collapsed {
+        display: none;
+      }
+
+      .topic {
+        padding: 14px 18px;
+        border-radius: 10px;
+        border: 1px solid var(--rm-border);
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background 0.3s,
+          box-shadow 0.15s;
+        background: var(--rm-bg);
+        min-width: 0;
+        overflow: hidden;
+      }
+      .topic:hover {
+        border-color: var(--rm-border-hover);
+        box-shadow: 0 2px 8px var(--rm-shadow);
+      }
+      .topic.active {
+        grid-column: 1 / -1;
+        border-color: var(--rm-border-hover);
+        background: var(--rm-bg-secondary);
+        box-shadow: 0 2px 12px var(--rm-shadow-lg);
+      }
+      .topic-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .topic-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--rm-text);
+        margin-bottom: 4px;
+        flex: 1;
+        transition: color 0.3s;
+      }
+      .topic-desc {
+        font-size: 13.5px;
+        color: var(--rm-text-secondary);
+        line-height: 1.55;
+        transition: color 0.3s;
+      }
+      .topic-toggle {
+        font-size: 11px;
+        color: var(--rm-text-tertiary);
+        transition:
+          transform 0.2s,
+          color 0.3s;
+        flex-shrink: 0;
+      }
+      .topic.active .topic-toggle {
+        transform: rotate(180deg);
+      }
+
+      .topic-content {
+        display: none;
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid var(--rm-border);
+        min-width: 0;
+        overflow: hidden;
+      }
+      .topic.active .topic-content {
+        display: block;
+      }
+      .topic-content h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--rm-text);
+        margin: 0 0 14px;
+        letter-spacing: -0.3px;
+        transition: color 0.3s;
+      }
+      .topic-content p {
+        font-size: 14.5px;
+        color: var(--rm-text-secondary);
+        line-height: 1.75;
+        margin: 0 0 16px;
+        transition: color 0.3s;
+      }
+      .topic-content p strong {
+        color: var(--rm-text);
+        font-weight: 600;
+      }
+      .topic-content code {
+        font-family:
+          "Fira Code", "SF Mono", "Cascadia Code", "JetBrains Mono", "Consolas",
+          monospace;
+        font-size: 0.88em;
+        background: var(--rm-code-bg);
+        padding: 2px 6px;
+        border-radius: 5px;
+        font-weight: 500;
+        word-break: break-word;
+        transition: background 0.3s;
+      }
+      .topic-content pre {
+        background: var(--rm-pre-bg);
+        color: #c0caf5;
+        border-radius: 10px;
+        padding: 18px 20px;
+        margin: 0 0 18px;
+        overflow-x: auto;
+        max-width: 100%;
+        box-sizing: border-box;
+        font-size: 13.5px;
+        line-height: 1.7;
+        font-family:
+          "Fira Code", "SF Mono", "Cascadia Code", "JetBrains Mono", "Consolas",
+          monospace;
+        border: 1px solid var(--rm-pre-border);
+        transition:
+          background 0.3s,
+          border-color 0.3s;
+      }
+      .topic-content pre code {
+        background: none;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: inherit;
+      }
+      .topic-content pre .kw {
+        color: #bb9af7;
+      }
+      .topic-content pre .str {
+        color: #9ece6a;
+      }
+      .topic-content pre .num {
+        color: #ff9e64;
+      }
+      .topic-content pre .cm {
+        color: #565f89;
+        font-style: italic;
+      }
+      .topic-content pre .tp {
+        color: #7aa2f7;
+      }
+      .topic-content pre .fn {
+        color: #7dcfff;
+      }
+
+      .key-points {
+        background: var(--rm-keypoints-bg);
+        border-radius: 10px;
+        padding: 18px 20px;
+        margin-top: 14px;
+        border: 1px solid var(--rm-keypoints-border);
+        transition:
+          background 0.3s,
+          border-color 0.3s;
+      }
+      .key-points h4 {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--rm-text);
+        margin: 0 0 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        transition: color 0.3s;
+      }
+      .key-points ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      .key-points li {
+        font-size: 14px;
+        color: var(--rm-text-secondary);
+        line-height: 1.7;
+        margin-bottom: 6px;
+        transition: color 0.3s;
+      }
+      .key-points li code {
+        font-size: 0.88em;
+      }
+
+      .version-note {
+        background: rgba(122, 162, 247, 0.08);
+        border-left: 3px solid #7aa2f7;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 0 0 16px;
+        font-size: 13.5px;
+        color: var(--rm-text-secondary);
+        line-height: 1.65;
+      }
+      .version-note strong {
+        color: #7aa2f7;
+        font-weight: 600;
+      }
+
+      /* ── Mobile Touch ── */
+      .phase-header,
+      .topic-header {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+      .topic {
+        touch-action: manipulation;
+      }
+
+      /* ── Dark Phase Headers ── */
+      .roadmap.dark .phase-header[style*="#E8F0FE"] {
+        background: #1a2238 !important;
+      }
+      .roadmap.dark .phase-header[style*="#F3E8FD"] {
+        background: #251a38 !important;
+      }
+      .roadmap.dark .phase-header[style*="#E1F5EE"] {
+        background: #1a2e28 !important;
+      }
+      .roadmap.dark .phase-header[style*="#FEF3E2"] {
+        background: #2c2518 !important;
+      }
+      .roadmap.dark .phase-header[style*="#FAECE7"] {
+        background: #2c1f1a !important;
+      }
+      .roadmap.dark .phase-header[style*="#E0F2F1"] {
+        background: #182828 !important;
+      }
+      .roadmap.dark .phase-header[style*="#FFF8E1"] {
+        background: #2a2518 !important;
+      }
+      .roadmap.dark .phase-header[style*="#EDE7F6"] {
+        background: #221e32 !important;
+      }
+      .roadmap.dark .phase-header[style*="#E8F5E9"] {
+        background: #1a2c1e !important;
+      }
+      /* .roadmap.dark .phase-title {
+    color: var(--rm-text) !important;
+  } */
+      .roadmap.dark .phase-tag {
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: var(--rm-text-secondary) !important;
+      }
+      .roadmap.dark .phase-num {
+        opacity: 0.9;
+      }
+
+      /* ── Responsive — Tablet ── */
+      @media (max-width: 768px) {
+        .roadmap {
+          padding: 16px 0;
+        }
+        .phase {
+          margin-bottom: 24px;
+          border-radius: 12px;
+        }
+        .phase-header {
+          padding: 14px 16px;
+          gap: 10px;
+        }
+        .phase-num {
+          width: 30px;
+          height: 30px;
+          font-size: 14px;
+        }
+        .phase-title {
+          font-size: 15px;
+        }
+        .phase-tag {
+          font-size: 11.5px;
+          padding: 3px 10px;
+        }
+        .progress-bar {
+          margin: 0 16px 12px;
+        }
+        .phase-body {
+          padding: 0 16px 16px;
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+        .topic {
+          padding: 13px 15px;
+        }
+        .topic-name {
+          font-size: 14.5px;
+        }
+        .topic-desc {
+          font-size: 13px;
+        }
+        .topic-content h3 {
+          font-size: 16.5px;
+        }
+        .topic-content p {
+          font-size: 14px;
+          line-height: 1.7;
+        }
+        .topic-content pre {
+          padding: 14px;
+          font-size: 12px;
+          line-height: 1.6;
+          border-radius: 8px;
+          white-space: pre-wrap;
+          word-break: break-word;
+          overflow-wrap: break-word;
+          overflow-x: hidden;
+        }
+        .key-points {
+          padding: 14px 16px;
+          border-radius: 8px;
+        }
+        .key-points li {
+          font-size: 13.5px;
+        }
+        .theme-bar {
+          padding: 0 16px 10px;
+        }
+        .version-note {
+          font-size: 13px;
+          padding: 10px 14px;
+        }
+      }
+
+      /* ── Responsive — Mobile ── */
+      @media (max-width: 480px) {
+        .roadmap {
+          padding: 10px 0;
+        }
+        .phase {
+          margin-bottom: 20px;
+          border-radius: 0;
+          border-left: none;
+          border-right: none;
+        }
+        .phase-header {
+          padding: 13px 14px;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+        .phase-num {
+          width: 28px;
+          height: 28px;
+          font-size: 13px;
+        }
+        .phase-title {
+          font-size: 14.5px;
+          min-width: 0;
+        }
+        .phase-tag {
+          font-size: 11px;
+          padding: 2px 8px;
+          order: 4;
+          margin-left: 36px;
+          margin-top: -4px;
+        }
+        .chevron {
+          font-size: 11px;
+        }
+        .progress-bar {
+          margin: 0 14px 10px;
+          height: 4px;
+        }
+        .phase-body {
+          padding: 0 14px 14px;
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        .topic {
+          padding: 12px 14px;
+          border-radius: 8px;
+        }
+        .topic-name {
+          font-size: 14px;
+          margin-bottom: 2px;
+        }
+        .topic-desc {
+          font-size: 12.5px;
+          line-height: 1.45;
+        }
+        .topic-toggle {
+          font-size: 10px;
+        }
+        .topic-content h3 {
+          font-size: 15.5px;
+        }
+        .topic-content p {
+          font-size: 13.5px;
+          line-height: 1.65;
+          margin-bottom: 12px;
+        }
+        .topic-content code {
+          font-size: 0.82em;
+          padding: 1.5px 5px;
+        }
+        .topic-content pre {
+          padding: 12px 10px;
+          font-size: 11px;
+          line-height: 1.55;
+          border-radius: 8px;
+          white-space: pre-wrap;
+          word-break: break-word;
+          overflow-wrap: break-word;
+          overflow-x: hidden;
+          tab-size: 2;
+        }
+        .key-points {
+          padding: 12px 14px;
+          border-radius: 8px;
+        }
+        .key-points h4 {
+          font-size: 12px;
+        }
+        .key-points ul {
+          padding-left: 16px;
+        }
+        .key-points li {
+          font-size: 13px;
+          line-height: 1.6;
+        }
+        .theme-bar {
+          padding: 0 14px 8px;
+        }
+        .theme-label {
+          font-size: 12px;
+        }
+        .theme-switch {
+          width: 46px;
+          height: 24px;
+        }
+        .theme-slider .icon {
+          font-size: 11px;
+        }
+        .theme-slider::after {
+          width: 18px;
+          height: 18px;
+        }
+        .theme-switch input:checked + .theme-slider::after {
+          transform: translateX(22px);
+        }
+        .version-note {
+          font-size: 12.5px;
+          padding: 10px 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="roadmap dark" id="roadmap">
+      <div class="theme-bar">
+        <span class="theme-label">Theme</span>
+        <label class="theme-switch" title="Toggle dark mode">
+          <input type="checkbox" id="themeToggle" checked />
+          <span class="theme-slider"
+            ><span class="icon icon-sun">☀️</span
+            ><span class="icon icon-moon">🌙</span></span
+          >
+        </label>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════ -->
+      <!-- PHASE 1: FOUNDATION                                -->
+      <!-- ═══════════════════════════════════════════════════ -->
+      <div class="phase">
+        <div class="phase-header" style="background: #e8f0fe">
+          <div class="phase-num" style="background: #1a56db; color: #fff">
+            1
+          </div>
+          <div class="phase-title" style="color: #1a3a6b">
+            Foundation — Getting Started
+          </div>
+          <div class="phase-tag" style="background: #b8d4fe; color: #1a3a6b">
+            Week 1
+          </div>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            style="width: 100%; background: #1a56db"
+          ></div>
+        </div>
+        <div class="phase-body">
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">What is Next.js & why use it</div>
+                <div class="topic-desc">
+                  React framework, SSR, SSG, full-stack capabilities
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>What is Next.js?</h3>
+              <p>
+                Next.js is a <strong>React framework</strong> built by Vercel
+                that gives you everything you need for production: server-side
+                rendering, static generation, API routes, file-based routing,
+                and more — out of the box. Instead of configuring webpack,
+                babel, routing libraries, and SSR yourself, Next.js handles it
+                all.
+              </p>
+              <p><strong>Why use Next.js over plain React?</strong></p>
+              <pre><span class="cm">// Plain React (Create React App / Vite):</span>
+<span class="cm">// - Client-side only rendering (bad for SEO)</span>
+<span class="cm">// - No built-in routing (need react-router)</span>
+<span class="cm">// - No server-side code (need separate backend)</span>
+<span class="cm">// - Manual code splitting</span>
+<span class="cm">// - No image/font optimization</span>
+
+<span class="cm">// Next.js gives you ALL of this built-in:</span>
+<span class="cm">// ✓ Server-Side Rendering (SSR) &amp; Static Generation (SSG)</span>
+<span class="cm">// ✓ File-based routing (no react-router needed)</span>
+<span class="cm">// ✓ API routes / Route handlers (full-stack)</span>
+<span class="cm">// ✓ Automatic code splitting per route</span>
+<span class="cm">// ✓ Image, font, script optimization</span>
+<span class="cm">// ✓ Server Components (React 19)</span>
+<span class="cm">// ✓ Server Actions (form mutations)</span>
+<span class="cm">// ✓ Middleware, caching, ISR</span></pre>
+              <div class="version-note">
+                <strong>Version note:</strong> Next.js has two routing systems.
+                The <strong>Pages Router</strong> (legacy, pre-13) and the
+                <strong>App Router</strong> (Next.js 13+, recommended). This
+                course uses the App Router exclusively.
+              </div>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Next.js = React + routing + SSR + API + optimizations in one
+                    framework
+                  </li>
+                  <li>
+                    Built and maintained by Vercel — the leading React
+                    deployment platform
+                  </li>
+                  <li>
+                    Use the <strong>App Router</strong> for all new projects
+                    (Pages Router is legacy)
+                  </li>
+                  <li>
+                    Full-stack: write frontend AND backend code in one project
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Project setup</div>
+                <div class="topic-desc">
+                  create-next-app, TypeScript, Tailwind, ESLint
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Project Setup with create-next-app</h3>
+              <p>
+                The fastest way to start a Next.js project is with
+                <code>create-next-app</code>. It sets up everything: TypeScript,
+                ESLint, Tailwind CSS, and the App Router.
+              </p>
+              <pre><span class="cm"># Create a new project with all defaults</span>
+npx create-next-app@latest my-app
+
+<span class="cm"># It will ask you:</span>
+<span class="cm"># ✔ Would you like to use TypeScript? → Yes</span>
+<span class="cm"># ✔ Would you like to use ESLint? → Yes</span>
+<span class="cm"># ✔ Would you like to use Tailwind CSS? → Yes</span>
+<span class="cm"># ✔ Would you like to use `src/` directory? → Yes</span>
+<span class="cm"># ✔ Would you like to use App Router? → Yes</span>
+<span class="cm"># ✔ Would you like to use Turbopack for `next dev`? → Yes</span>
+
+<span class="cm"># Start development server</span>
+<span class="kw">cd</span> my-app
+npm run dev   <span class="cm"># → http://localhost:3000</span></pre>
+              <p><strong>Essential scripts in package.json:</strong></p>
+              <pre>{
+  <span class="str">"scripts"</span>: {
+    <span class="str">"dev"</span>: <span class="str">"next dev --turbopack"</span>,  <span class="cm">// development (fast refresh)</span>
+    <span class="str">"build"</span>: <span class="str">"next build"</span>,           <span class="cm">// production build</span>
+    <span class="str">"start"</span>: <span class="str">"next start"</span>,           <span class="cm">// start production server</span>
+    <span class="str">"lint"</span>: <span class="str">"next lint"</span>               <span class="cm">// run ESLint</span>
+  }
+}</pre>
+              <div class="version-note">
+                <strong>Next.js 15:</strong> Turbopack (Rust-based bundler) is
+                now stable for <code>next dev</code>. It's 10x faster than
+                webpack for dev server startup.
+                <strong>Next.js 16:</strong> Turbopack is also stable for
+                <code>next build</code>.
+              </div>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>npx create-next-app@latest</code> is the standard
+                    project scaffold
+                  </li>
+                  <li>
+                    Always choose TypeScript + App Router for new projects
+                  </li>
+                  <li>
+                    Turbopack replaces webpack for blazing-fast dev builds
+                  </li>
+                  <li>
+                    <code>npm run dev</code> starts the dev server on port 3000
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Project structure</div>
+                <div class="topic-desc">
+                  app/, layout, page, conventions, special files
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Project Structure & Conventions</h3>
+              <p>
+                Next.js uses <strong>file-system conventions</strong>. Specific
+                file names have special meaning inside the
+                <code>app/</code> directory:
+              </p>
+              <pre>my-app/
+├── src/
+│   └── app/
+│       ├── layout.tsx      <span class="cm">← Root layout (wraps all pages)</span>
+│       ├── page.tsx        <span class="cm">← Home page (/)</span>
+│       ├── loading.tsx     <span class="cm">← Loading UI (Suspense)</span>
+│       ├── error.tsx       <span class="cm">← Error boundary</span>
+│       ├── not-found.tsx   <span class="cm">← 404 page</span>
+│       ├── globals.css     <span class="cm">← Global styles</span>
+│       ├── about/
+│       │   └── page.tsx    <span class="cm">← /about</span>
+│       ├── blog/
+│       │   ├── page.tsx    <span class="cm">← /blog</span>
+│       │   └── [slug]/
+│       │       └── page.tsx <span class="cm">← /blog/my-post</span>
+│       └── api/
+│           └── users/
+│               └── route.ts <span class="cm">← API: /api/users</span>
+├── public/                 <span class="cm">← Static files (images, etc.)</span>
+├── next.config.ts          <span class="cm">← Next.js configuration</span>
+├── tailwind.config.ts      <span class="cm">← Tailwind config</span>
+├── tsconfig.json           <span class="cm">← TypeScript config</span>
+└── package.json</pre>
+              <p><strong>Special file names</strong> in the App Router:</p>
+              <pre><span class="cm">// page.tsx    → Makes a route publicly accessible</span>
+<span class="cm">// layout.tsx  → Shared UI wrapper (persists across navigation)</span>
+<span class="cm">// loading.tsx → Automatic loading state (uses React Suspense)</span>
+<span class="cm">// error.tsx   → Error boundary for the route segment</span>
+<span class="cm">// not-found.tsx → 404 page for the segment</span>
+<span class="cm">// route.ts    → API endpoint (GET, POST, etc.)</span>
+<span class="cm">// template.tsx → Like layout but re-mounts on navigation</span>
+<span class="cm">// default.tsx → Fallback for parallel routes</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Folders define routes, <code>page.tsx</code> makes them
+                    accessible
+                  </li>
+                  <li>
+                    <code>layout.tsx</code> wraps pages and persists state
+                    across navigation
+                  </li>
+                  <li>
+                    Special files (<code>loading</code>, <code>error</code>,
+                    <code>not-found</code>) provide built-in UX patterns
+                  </li>
+                  <li>
+                    The <code>public/</code> folder serves static assets at the
+                    root URL
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Pages & basic routing</div>
+                <div class="topic-desc">
+                  page.tsx, nested routes, route segments
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Pages & Basic Routing</h3>
+              <p>
+                In Next.js, <strong>folders create URL segments</strong> and
+                <code>page.tsx</code> makes them navigable. No router
+                configuration needed.
+              </p>
+              <pre><span class="cm">// app/page.tsx → accessible at /</span>
+<span class="kw">export default function</span> <span class="fn">HomePage</span>() {
+  <span class="kw">return</span> &lt;h1&gt;Welcome to my app&lt;/h1&gt;;
+}
+
+<span class="cm">// app/about/page.tsx → accessible at /about</span>
+<span class="kw">export default function</span> <span class="fn">AboutPage</span>() {
+  <span class="kw">return</span> &lt;h1&gt;About us&lt;/h1&gt;;
+}
+
+<span class="cm">// app/blog/posts/page.tsx → accessible at /blog/posts</span>
+<span class="kw">export default function</span> <span class="fn">PostsPage</span>() {
+  <span class="kw">return</span> &lt;h1&gt;Blog posts&lt;/h1&gt;;
+}</pre>
+              <p>
+                <strong>Root layout</strong> is required — it wraps every page:
+              </p>
+              <pre><span class="cm">// app/layout.tsx — required root layout</span>
+<span class="kw">export default function</span> <span class="fn">RootLayout</span>({
+  children,
+}: {
+  children: <span class="tp">React.ReactNode</span>;
+}) {
+  <span class="kw">return</span> (
+    &lt;html lang=<span class="str">"en"</span>&gt;
+      &lt;body&gt;
+        &lt;nav&gt;My App&lt;/nav&gt;
+        {children}
+      &lt;/body&gt;
+    &lt;/html&gt;
+  );
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Folder = URL segment, <code>page.tsx</code> = renders the
+                    route
+                  </li>
+                  <li>Nested folders create nested URLs automatically</li>
+                  <li>
+                    <code>layout.tsx</code> is required at the root; nested
+                    layouts are optional
+                  </li>
+                  <li>
+                    Pages are Server Components by default — they can be
+                    <code>async</code>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Linking & navigation</div>
+                <div class="topic-desc">
+                  Link component, useRouter, usePathname
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Linking & Navigation</h3>
+              <p>
+                Next.js provides the <code>&lt;Link&gt;</code> component for
+                client-side navigation. It prefetches routes automatically for
+                instant transitions.
+              </p>
+              <pre><span class="kw">import</span> <span class="tp">Link</span> <span class="kw">from</span> <span class="str">"next/link"</span>;
+
+<span class="kw">export default function</span> <span class="fn">Nav</span>() {
+  <span class="kw">return</span> (
+    &lt;nav&gt;
+      &lt;<span class="tp">Link</span> href=<span class="str">"/"</span>&gt;Home&lt;/<span class="tp">Link</span>&gt;
+      &lt;<span class="tp">Link</span> href=<span class="str">"/about"</span>&gt;About&lt;/<span class="tp">Link</span>&gt;
+      &lt;<span class="tp">Link</span> href=<span class="str">"/blog/my-post"</span>&gt;Post&lt;/<span class="tp">Link</span>&gt;
+
+      {<span class="cm">/* Prefetch disabled for rarely visited pages */</span>}
+      &lt;<span class="tp">Link</span> href=<span class="str">"/settings"</span> prefetch={<span class="kw">false</span>}&gt;Settings&lt;/<span class="tp">Link</span>&gt;
+    &lt;/nav&gt;
+  );
+}</pre>
+              <p>
+                <strong>Programmatic navigation</strong> with
+                <code>useRouter</code> (client components only):
+              </p>
+              <pre><span class="str">"use client"</span>;
+<span class="kw">import</span> { useRouter, usePathname, useSearchParams } <span class="kw">from</span> <span class="str">"next/navigation"</span>;
+
+<span class="kw">export function</span> <span class="fn">SearchButton</span>() {
+  <span class="kw">const</span> router = <span class="fn">useRouter</span>();
+  <span class="kw">const</span> pathname = <span class="fn">usePathname</span>();     <span class="cm">// current path</span>
+  <span class="kw">const</span> params = <span class="fn">useSearchParams</span>();   <span class="cm">// query params</span>
+
+  <span class="kw">return</span> (
+    &lt;button onClick={() =&gt; {
+      router.<span class="fn">push</span>(<span class="str">"/search?q=nextjs"</span>);   <span class="cm">// navigate</span>
+      router.<span class="fn">replace</span>(<span class="str">"/login"</span>);          <span class="cm">// no history entry</span>
+      router.<span class="fn">back</span>();                      <span class="cm">// go back</span>
+      router.<span class="fn">refresh</span>();                   <span class="cm">// re-fetch server data</span>
+    }}&gt;Navigate&lt;/button&gt;
+  );
+}</pre>
+              <div class="version-note">
+                <strong>Next.js 13+ change:</strong> Navigation hooks moved from
+                <code>"next/router"</code> (Pages Router) to
+                <code>"next/navigation"</code> (App Router). The API is
+                different — <code>useRouter()</code> no longer has
+                <code>query</code> or <code>asPath</code>.
+              </div>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>&lt;Link href="..."&gt;</code> for declarative,
+                    prefetched navigation
+                  </li>
+                  <li>
+                    <code>useRouter()</code> from
+                    <code>"next/navigation"</code> for programmatic navigation
+                  </li>
+                  <li>
+                    <code>usePathname()</code> returns current path,
+                    <code>useSearchParams()</code> returns query
+                  </li>
+                  <li>
+                    Links prefetch visible routes by default for instant
+                    navigation
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Metadata & SEO</div>
+                <div class="topic-desc">
+                  title, description, Open Graph, generateMetadata
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Metadata & SEO</h3>
+              <p>
+                Next.js has a built-in Metadata API for managing
+                <code>&lt;head&gt;</code> tags — titles, descriptions, Open
+                Graph images, and more.
+              </p>
+              <pre><span class="cm">// app/layout.tsx — static metadata</span>
+<span class="kw">import type</span> { <span class="tp">Metadata</span> } <span class="kw">from</span> <span class="str">"next"</span>;
+
+<span class="kw">export const</span> metadata: <span class="tp">Metadata</span> = {
+  title: { default: <span class="str">"My App"</span>, template: <span class="str">"%s | My App"</span> },
+  description: <span class="str">"The best app ever built"</span>,
+  openGraph: {
+    title: <span class="str">"My App"</span>,
+    description: <span class="str">"The best app ever built"</span>,
+    url: <span class="str">"https://myapp.com"</span>,
+    images: [<span class="str">"/og-image.png"</span>],
+  },
+};</pre>
+              <p><strong>Dynamic metadata</strong> for pages with data:</p>
+              <pre><span class="cm">// app/blog/[slug]/page.tsx</span>
+<span class="kw">import type</span> { <span class="tp">Metadata</span> } <span class="kw">from</span> <span class="str">"next"</span>;
+
+<span class="kw">export async function</span> <span class="fn">generateMetadata</span>(
+  { params }: { params: <span class="tp">Promise</span>&lt;{ slug: <span class="tp">string</span> }&gt; }
+): <span class="tp">Promise</span>&lt;<span class="tp">Metadata</span>&gt; {
+  <span class="kw">const</span> { slug } = <span class="kw">await</span> params;
+  <span class="kw">const</span> post = <span class="kw">await</span> <span class="fn">getPost</span>(slug);
+  <span class="kw">return</span> {
+    title: post.title,
+    description: post.excerpt,
+    openGraph: { images: [post.coverImage] },
+  };
+}</pre>
+              <div class="version-note">
+                <strong>Next.js 15 change:</strong> <code>params</code> in
+                <code>generateMetadata</code> is now a
+                <strong>Promise</strong> — you must <code>await</code> it. In
+                Next.js 14, it was a plain object.
+              </div>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Export <code>metadata</code> object for static metadata or
+                    <code>generateMetadata()</code> for dynamic
+                  </li>
+                  <li>
+                    Use <code>title.template</code> in layout to auto-format
+                    child page titles
+                  </li>
+                  <li>
+                    Open Graph, Twitter cards, icons, and robots are all
+                    supported
+                  </li>
+                  <li>
+                    Metadata is automatically deduped and merged from layouts →
+                    pages
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════ -->
+      <!-- PHASE 2: ROUTING MASTERY                           -->
+      <!-- ═══════════════════════════════════════════════════ -->
+      <div class="phase">
+        <div class="phase-header" style="background: #f3e8fd">
+          <div class="phase-num" style="background: #7c3aed; color: #fff">
+            2
+          </div>
+          <div class="phase-title" style="color: #4c1d95">Routing Mastery</div>
+          <div class="phase-tag" style="background: #ddd6fe; color: #4c1d95">
+            Week 2–3
+          </div>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            style="width: 100%; background: #7c3aed"
+          ></div>
+        </div>
+        <div class="phase-body">
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Dynamic routes</div>
+                <div class="topic-desc">
+                  [id], [...slug], [[...slug]], catch-all segments
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Dynamic Routes</h3>
+              <p>
+                Wrap folder names in brackets to create dynamic URL segments.
+                The parameter value is passed as a prop to the page.
+              </p>
+              <pre><span class="cm">// app/users/[id]/page.tsx → /users/1, /users/42</span>
+<span class="kw">export default async function</span> <span class="fn">UserPage</span>({
+  params,
+}: {
+  params: <span class="tp">Promise</span>&lt;{ id: <span class="tp">string</span> }&gt;;
+}) {
+  <span class="kw">const</span> { id } = <span class="kw">await</span> params;
+  <span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">getUser</span>(<span class="fn">Number</span>(id));
+  <span class="kw">return</span> &lt;h1&gt;{user.name}&lt;/h1&gt;;
+}
+
+<span class="cm">// app/blog/[...slug]/page.tsx → catches ALL sub-segments</span>
+<span class="cm">// /blog/2024/jan/my-post → slug = ["2024", "jan", "my-post"]</span>
+
+<span class="cm">// app/docs/[[...slug]]/page.tsx → OPTIONAL catch-all</span>
+<span class="cm">// /docs → slug = undefined</span>
+<span class="cm">// /docs/getting-started → slug = ["getting-started"]</span></pre>
+              <p>
+                <strong>Generate static params</strong> for static generation:
+              </p>
+              <pre><span class="kw">export async function</span> <span class="fn">generateStaticParams</span>() {
+  <span class="kw">const</span> posts = <span class="kw">await</span> <span class="fn">getAllPosts</span>();
+  <span class="kw">return</span> posts.<span class="fn">map</span>((post) =&gt; ({ slug: post.slug }));
+}
+<span class="cm">// Pre-renders /blog/first-post, /blog/second-post, etc.</span></pre>
+              <div class="version-note">
+                <strong>Next.js 15:</strong> <code>params</code> is now async (a
+                <code>Promise</code>). You must <code>await params</code> before
+                accessing values. In Next.js 14, it was synchronous.
+              </div>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>[id]</code> = single dynamic segment,
+                    <code>[...slug]</code> = catch-all,
+                    <code>[[...slug]]</code> = optional catch-all
+                  </li>
+                  <li>
+                    Params are always <strong>strings</strong> — parse numbers
+                    with
+                    <code>Number(id)</code>
+                  </li>
+                  <li>
+                    <code>generateStaticParams()</code> pre-renders dynamic
+                    pages at build time
+                  </li>
+                  <li>
+                    In Next.js 15+, <code>params</code> is a Promise — always
+                    <code>await</code> it
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Layouts & templates</div>
+                <div class="topic-desc">
+                  Nested layouts, shared UI, layout vs template
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Layouts & Templates</h3>
+              <p>
+                <strong>Layouts</strong> wrap pages and persist across
+                navigation — the component doesn't unmount when you navigate
+                between child pages. This preserves state (like scroll position
+                or input values).
+              </p>
+              <pre><span class="cm">// app/dashboard/layout.tsx — wraps all /dashboard/* pages</span>
+<span class="kw">export default function</span> <span class="fn">DashboardLayout</span>({
+  children,
+}: {
+  children: <span class="tp">React.ReactNode</span>;
+}) {
+  <span class="kw">return</span> (
+    &lt;div className=<span class="str">"flex"</span>&gt;
+      &lt;aside&gt;
+        &lt;nav&gt;Dashboard Sidebar&lt;/nav&gt;
+      &lt;/aside&gt;
+      &lt;main&gt;{children}&lt;/main&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+              <p>
+                <strong>Templates</strong> are like layouts but they
+                <strong>re-mount</strong> on every navigation (create a new
+                instance). Use them for enter/exit animations or per-page
+                logging:
+              </p>
+              <pre><span class="cm">// app/dashboard/template.tsx</span>
+<span class="kw">export default function</span> <span class="fn">DashboardTemplate</span>({
+  children,
+}: {
+  children: <span class="tp">React.ReactNode</span>;
+}) {
+  <span class="cm">// This runs on EVERY navigation within /dashboard</span>
+  <span class="kw">return</span> &lt;div className=<span class="str">"animate-fadeIn"</span>&gt;{children}&lt;/div&gt;;
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Layout = persists across navigation (keeps state), Template
+                    = re-mounts each time
+                  </li>
+                  <li>
+                    Layouts can be nested: root layout → dashboard layout →
+                    settings layout
+                  </li>
+                  <li>
+                    Root layout is required and must include
+                    <code>&lt;html&gt;</code> and <code>&lt;body&gt;</code>
+                  </li>
+                  <li>
+                    Layouts are Server Components by default — can fetch data
+                    directly
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Route groups</div>
+                <div class="topic-desc">
+                  (folder) organization, multiple root layouts
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Route Groups</h3>
+              <p>
+                Wrap folder names in <strong>parentheses</strong> to organize
+                routes without affecting the URL. The folder name is excluded
+                from the path.
+              </p>
+              <pre><span class="cm">// Organize by feature without changing URLs:</span>
+app/
+├── (marketing)/
+│   ├── layout.tsx    <span class="cm">← Marketing layout (header + footer)</span>
+│   ├── page.tsx      <span class="cm">← / (home page)</span>
+│   ├── about/
+│   │   └── page.tsx  <span class="cm">← /about</span>
+│   └── pricing/
+│       └── page.tsx  <span class="cm">← /pricing</span>
+├── (app)/
+│   ├── layout.tsx    <span class="cm">← App layout (sidebar + topbar)</span>
+│   ├── dashboard/
+│   │   └── page.tsx  <span class="cm">← /dashboard</span>
+│   └── settings/
+│       └── page.tsx  <span class="cm">← /settings</span>
+└── (auth)/
+    ├── layout.tsx    <span class="cm">← Minimal auth layout</span>
+    ├── login/
+    │   └── page.tsx  <span class="cm">← /login</span>
+    └── signup/
+        └── page.tsx  <span class="cm">← /signup</span></pre>
+              <p>
+                Each route group can have its own <code>layout.tsx</code>,
+                giving you <strong>multiple root layouts</strong> in one app —
+                different visual shells for marketing vs app vs auth pages.
+              </p>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>(folderName)</code> — parentheses opt-out of URL
+                    routing
+                  </li>
+                  <li>
+                    Use for logical grouping: <code>(marketing)</code>,
+                    <code>(app)</code>, <code>(auth)</code>
+                  </li>
+                  <li>
+                    Each group can have its own layout — great for different
+                    page shells
+                  </li>
+                  <li>
+                    Keeps your folder structure clean without creating
+                    unnecessary URL nesting
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Parallel & intercepting routes</div>
+                <div class="topic-desc">@slots, (.) convention, modals</div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Parallel & Intercepting Routes</h3>
+              <p>
+                <strong>Parallel routes</strong> let you render multiple pages
+                simultaneously in the same layout, using
+                <strong>named slots</strong> (<code>@slotName</code>):
+              </p>
+              <pre><span class="cm">// app/dashboard/layout.tsx</span>
+<span class="kw">export default function</span> <span class="fn">Layout</span>({
+  children,
+  analytics,
+  team,
+}: {
+  children: <span class="tp">React.ReactNode</span>;
+  analytics: <span class="tp">React.ReactNode</span>;
+  team: <span class="tp">React.ReactNode</span>;
+}) {
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      {children}
+      {analytics}  <span class="cm">{/* from @analytics/page.tsx */}</span>
+      {team}        <span class="cm">{/* from @team/page.tsx */}</span>
+    &lt;/div&gt;
+  );
+}
+
+<span class="cm">// Folder structure:</span>
+<span class="cm">// app/dashboard/@analytics/page.tsx</span>
+<span class="cm">// app/dashboard/@team/page.tsx</span></pre>
+              <p>
+                <strong>Intercepting routes</strong> let you load a route within
+                the current layout (like modals). Use <code>(.)</code> to
+                intercept a sibling, <code>(..)</code> for parent:
+              </p>
+              <pre><span class="cm">// app/feed/@modal/(.)photo/[id]/page.tsx</span>
+<span class="cm">// When clicking a photo link from /feed, it opens in a modal</span>
+<span class="cm">// Direct navigation to /photo/123 shows the full page instead</span>
+
+<span class="cm">// Convention:</span>
+<span class="cm">// (.)  — intercept same level</span>
+<span class="cm">// (..) — intercept one level up</span>
+<span class="cm">// (..)(..)} — intercept two levels up</span>
+<span class="cm">// (...) — intercept from root</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Parallel routes (<code>@slot</code>) render multiple pages
+                    in one layout simultaneously
+                  </li>
+                  <li>
+                    Intercepting routes show content in context (modals) without
+                    full navigation
+                  </li>
+                  <li>
+                    The Instagram-style photo modal pattern is the classic use
+                    case
+                  </li>
+                  <li>
+                    Use <code>default.tsx</code> as fallback when a parallel
+                    slot has no matching route
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Loading & error states</div>
+                <div class="topic-desc">
+                  loading.tsx, error.tsx, Suspense boundaries
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Loading & Error States</h3>
+              <p>
+                Next.js provides built-in loading and error handling through
+                special files. <code>loading.tsx</code> creates an automatic
+                <code>Suspense</code> boundary around the page.
+              </p>
+              <pre><span class="cm">// app/dashboard/loading.tsx — shows while page loads</span>
+<span class="kw">export default function</span> <span class="fn">Loading</span>() {
+  <span class="kw">return</span> (
+    &lt;div className=<span class="str">"animate-pulse"</span>&gt;
+      &lt;div className=<span class="str">"h-8 bg-gray-200 rounded w-1/3 mb-4"</span> /&gt;
+      &lt;div className=<span class="str">"h-4 bg-gray-200 rounded w-full mb-2"</span> /&gt;
+      &lt;div className=<span class="str">"h-4 bg-gray-200 rounded w-2/3"</span> /&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+              <p>
+                <strong>Error boundaries</strong> catch errors and show a
+                fallback UI:
+              </p>
+              <pre><span class="str">"use client"</span>; <span class="cm">// error.tsx must be a client component</span>
+
+<span class="kw">export default function</span> <span class="fn">Error</span>({
+  error,
+  reset,
+}: {
+  error: <span class="tp">Error</span> &amp; { digest?: <span class="tp">string</span> };
+  reset: () =&gt; <span class="tp">void</span>;
+}) {
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;h2&gt;Something went wrong!&lt;/h2&gt;
+      &lt;p&gt;{error.message}&lt;/p&gt;
+      &lt;button onClick={reset}&gt;Try again&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>loading.tsx</code> = automatic Suspense boundary
+                    (shows skeleton while loading)
+                  </li>
+                  <li>
+                    <code>error.tsx</code> = automatic error boundary (must be a
+                    Client Component)
+                  </li>
+                  <li>
+                    <code>not-found.tsx</code> = custom 404 page, triggered by
+                    <code>notFound()</code> function
+                  </li>
+                  <li>
+                    These are scoped per segment — each folder can have its own
+                    loading/error UI
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Redirects & rewrites</div>
+                <div class="topic-desc">
+                  redirect(), permanentRedirect(), next.config
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Redirects & Rewrites</h3>
+              <p>
+                Next.js offers multiple ways to redirect users — in components,
+                middleware, or config.
+              </p>
+              <pre><span class="cm">// In Server Components or Server Actions</span>
+<span class="kw">import</span> { redirect, permanentRedirect, notFound } <span class="kw">from</span> <span class="str">"next/navigation"</span>;
+
+<span class="kw">export default async function</span> <span class="fn">Page</span>() {
+  <span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">getUser</span>();
+
+  <span class="kw">if</span> (!user) <span class="fn">redirect</span>(<span class="str">"/login"</span>);            <span class="cm">// 307 temporary</span>
+  <span class="kw">if</span> (user.banned) <span class="fn">permanentRedirect</span>(<span class="str">"/banned"</span>); <span class="cm">// 308 permanent</span>
+  <span class="kw">if</span> (!user.active) <span class="fn">notFound</span>();              <span class="cm">// shows not-found.tsx</span>
+
+  <span class="kw">return</span> &lt;h1&gt;Welcome {user.name}&lt;/h1&gt;;
+}</pre>
+              <p>
+                <strong>Config-based redirects and rewrites</strong> in
+                <code>next.config.ts</code>:
+              </p>
+              <pre><span class="cm">// next.config.ts</span>
+<span class="kw">const</span> nextConfig = {
+  <span class="kw">async</span> <span class="fn">redirects</span>() {
+    <span class="kw">return</span> [
+      { source: <span class="str">"/old-blog/:slug"</span>, destination: <span class="str">"/blog/:slug"</span>, permanent: <span class="kw">true</span> },
+    ];
+  },
+  <span class="kw">async</span> <span class="fn">rewrites</span>() {
+    <span class="kw">return</span> [
+      { source: <span class="str">"/api/proxy/:path*"</span>, destination: <span class="str">"https://api.example.com/:path*"</span> },
+    ];
+  },
+};</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>redirect()</code> for temporary (307),
+                    <code>permanentRedirect()</code> for permanent (308)
+                  </li>
+                  <li>
+                    <code>notFound()</code> triggers the nearest
+                    <code>not-found.tsx</code>
+                  </li>
+                  <li>
+                    Config-based redirects run at the edge before the page loads
+                  </li>
+                  <li>
+                    Rewrites map URLs without the user seeing the change (proxy
+                    pattern)
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════ -->
+      <!-- PHASE 3: RENDERING & DATA FETCHING                 -->
+      <!-- ═══════════════════════════════════════════════════ -->
+      <div class="phase">
+        <div class="phase-header" style="background: #e1f5ee">
+          <div class="phase-num" style="background: #0f6e56; color: #fff">
+            3
+          </div>
+          <div class="phase-title" style="color: #085041">
+            Rendering & Data Fetching
+          </div>
+          <div class="phase-tag" style="background: #9fe1cb; color: #085041">
+            Week 3–4
+          </div>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            style="width: 100%; background: #0f6e56"
+          ></div>
+        </div>
+        <div class="phase-body">
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Server Components</div>
+                <div class="topic-desc">
+                  RSC, async components, zero JS on client
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>React Server Components (RSC)</h3>
+              <p>
+                In Next.js App Router, components are
+                <strong>Server Components by default</strong>. They run on the
+                server, can be <code>async</code>, and send zero JavaScript to
+                the client.
+              </p>
+              <pre><span class="cm">// This is a Server Component — no "use client" needed</span>
+<span class="cm">// It can directly query a database, read files, call APIs</span>
+<span class="kw">export default async function</span> <span class="fn">UsersPage</span>() {
+  <span class="cm">// This runs on the server only — never exposed to the browser</span>
+  <span class="kw">const</span> users = <span class="kw">await</span> db.user.<span class="fn">findMany</span>();
+
+  <span class="kw">return</span> (
+    &lt;ul&gt;
+      {users.<span class="fn">map</span>(user =&gt; (
+        &lt;li key={user.id}&gt;{user.name}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+<span class="cm">// What you CAN'T do in Server Components:</span>
+<span class="cm">// ✗ useState, useEffect, useRef (no React hooks)</span>
+<span class="cm">// ✗ onClick, onChange (no event handlers)</span>
+<span class="cm">// ✗ browser APIs (window, document, localStorage)</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Server Components are the default — no directive needed
+                  </li>
+                  <li>
+                    They can be <code>async</code> and directly access
+                    databases, file system, secrets
+                  </li>
+                  <li>
+                    They send zero JS to the client — only the rendered HTML
+                  </li>
+                  <li>Cannot use hooks, event handlers, or browser APIs</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Client Components</div>
+                <div class="topic-desc">
+                  "use client", interactivity, hooks, boundaries
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Client Components</h3>
+              <p>
+                Add <code>"use client"</code> at the top of a file to make it a
+                Client Component. These are needed for interactivity: hooks,
+                event handlers, and browser APIs.
+              </p>
+              <pre><span class="str">"use client"</span>;
+
+<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="kw">export function</span> <span class="fn">LikeButton</span>({ initialLikes }: { initialLikes: <span class="tp">number</span> }) {
+  <span class="kw">const</span> [likes, setLikes] = <span class="fn">useState</span>(initialLikes);
+
+  <span class="kw">return</span> (
+    &lt;button onClick={() =&gt; <span class="fn">setLikes</span>(l =&gt; l + <span class="num">1</span>)}&gt;
+      ❤ {likes}
+    &lt;/button&gt;
+  );
+}</pre>
+              <p>
+                <strong>Best practice:</strong> keep Client Components small and
+                push them to the leaves of your component tree. Fetch data in
+                Server Components, pass it down:
+              </p>
+              <pre><span class="cm">// app/posts/page.tsx — Server Component (fetches data)</span>
+<span class="kw">export default async function</span> <span class="fn">PostsPage</span>() {
+  <span class="kw">const</span> posts = <span class="kw">await</span> <span class="fn">getPosts</span>();
+  <span class="kw">return</span> &lt;<span class="fn">PostList</span> posts={posts} /&gt;; <span class="cm">// pass to client</span>
+}
+
+<span class="cm">// components/PostList.tsx — Client Component (interactive)</span>
+<span class="str">"use client"</span>;
+<span class="kw">export function</span> <span class="fn">PostList</span>({ posts }: { posts: <span class="tp">Post</span>[] }) {
+  <span class="kw">const</span> [search, setSearch] = <span class="fn">useState</span>(<span class="str">""</span>);
+  <span class="kw">const</span> filtered = posts.<span class="fn">filter</span>(p =&gt; p.title.<span class="fn">includes</span>(search));
+  <span class="kw">return</span> ( ... );
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>"use client"</code> marks the boundary — everything it
+                    imports also becomes client
+                  </li>
+                  <li>
+                    Props passed from Server → Client must be serializable (no
+                    functions/classes)
+                  </li>
+                  <li>
+                    Push client boundaries down: keep most code on the server
+                  </li>
+                  <li>
+                    Pattern: Server fetches data → Client handles interaction
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Data fetching patterns</div>
+                <div class="topic-desc">
+                  fetch, async components, parallel fetching
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Data Fetching Patterns</h3>
+              <p>
+                In the App Router, you fetch data directly in Server Components
+                using <code>async/await</code>. No
+                <code>getServerSideProps</code> or
+                <code>getStaticProps</code> needed.
+              </p>
+              <pre><span class="cm">// Simple fetch in a Server Component</span>
+<span class="kw">export default async function</span> <span class="fn">ProductsPage</span>() {
+  <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">"https://api.example.com/products"</span>);
+  <span class="kw">const</span> products: <span class="tp">Product</span>[] = <span class="kw">await</span> res.<span class="fn">json</span>();
+  <span class="kw">return</span> products.<span class="fn">map</span>(p =&gt; &lt;div key={p.id}&gt;{p.name}&lt;/div&gt;);
+}
+
+<span class="cm">// Parallel fetching — don't await sequentially!</span>
+<span class="kw">export default async function</span> <span class="fn">DashboardPage</span>() {
+  <span class="cm">// Start ALL fetches at the same time</span>
+  <span class="kw">const</span> [user, posts, analytics] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+    <span class="fn">getUser</span>(),
+    <span class="fn">getPosts</span>(),
+    <span class="fn">getAnalytics</span>(),
+  ]);
+
+  <span class="kw">return</span> ( ... );
+}</pre>
+              <div class="version-note">
+                <strong>Next.js 14 → 15 change:</strong>
+                <code>fetch</code> caching changed. In Next.js 14,
+                <code>fetch()</code> was cached by default
+                (<code>force-cache</code>). In <strong>Next.js 15</strong>,
+                <code>fetch()</code> is
+                <strong>not cached by default</strong> (<code>no-store</code>).
+                You must opt-in to caching explicitly.
+              </div>
+              <pre><span class="cm">// Next.js 15+ — explicit caching</span>
+<span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(url);
+<span class="cm">// ↑ NOT cached (default in v15)</span>
+
+<span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(url, { cache: <span class="str">"force-cache"</span> });
+<span class="cm">// ↑ Cached indefinitely (static)</span>
+
+<span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(url, { next: { revalidate: <span class="num">3600</span> } });
+<span class="cm">// ↑ Cached for 1 hour (ISR)</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Fetch data directly in <code>async</code> Server Components
+                    — no special APIs needed
+                  </li>
+                  <li>
+                    Use <code>Promise.all()</code> for parallel fetches — avoid
+                    sequential waterfalls
+                  </li>
+                  <li>
+                    Next.js 15 changed fetch defaults: no caching unless you
+                    opt-in
+                  </li>
+                  <li>
+                    <code>{ next: { revalidate: N } }</code> = ISR (refresh
+                    every N seconds)
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Caching deep dive</div>
+                <div class="topic-desc">
+                  Request memoization, data cache, full route cache
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Caching in Next.js</h3>
+              <p>
+                Next.js has <strong>four layers of caching</strong>.
+                Understanding them is critical for production apps.
+              </p>
+              <pre><span class="cm">// 1. REQUEST MEMOIZATION (per-request, automatic)</span>
+<span class="cm">// Same fetch URL called multiple times in one render</span>
+<span class="cm">// → only ONE actual network request, result is shared</span>
+<span class="kw">const</span> user1 = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">"/api/user"</span>); <span class="cm">// fetches</span>
+<span class="kw">const</span> user2 = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">"/api/user"</span>); <span class="cm">// reuses result</span>
+
+<span class="cm">// 2. DATA CACHE (persistent, across requests)</span>
+<span class="cm">// fetch results stored on the server between requests</span>
+<span class="kw">await</span> <span class="fn">fetch</span>(url, { cache: <span class="str">"force-cache"</span> }); <span class="cm">// opt-in in v15</span>
+<span class="kw">await</span> <span class="fn">fetch</span>(url, { next: { revalidate: <span class="num">60</span> } }); <span class="cm">// timed</span>
+
+<span class="cm">// 3. FULL ROUTE CACHE (production only)</span>
+<span class="cm">// Entire rendered HTML + RSC payload cached at build</span>
+<span class="cm">// Static routes are pre-rendered and served from cache</span>
+
+<span class="cm">// 4. ROUTER CACHE (client-side, in-memory)</span>
+<span class="cm">// Visited routes cached in browser during session</span></pre>
+              <p><strong>Invalidation:</strong></p>
+              <pre><span class="kw">import</span> { revalidatePath, revalidateTag } <span class="kw">from</span> <span class="str">"next/cache"</span>;
+
+<span class="cm">// Revalidate by path</span>
+<span class="fn">revalidatePath</span>(<span class="str">"/blog"</span>);
+
+<span class="cm">// Revalidate by tag (preferred)</span>
+<span class="kw">await</span> <span class="fn">fetch</span>(url, { next: { tags: [<span class="str">"posts"</span>] } });
+<span class="fn">revalidateTag</span>(<span class="str">"posts"</span>); <span class="cm">// invalidate all fetches with this tag</span></pre>
+              <div class="version-note">
+                <strong>Next.js 15 changes:</strong> Default caching behavior
+                flipped. <code>fetch()</code>, <code>GET</code> route handlers,
+                and client router cache are now
+                <strong>uncached by default</strong>. This was the #1 developer
+                complaint in v14.
+              </div>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Request memoization: same fetch in one render = one network
+                    call
+                  </li>
+                  <li>
+                    Data cache: persistent server cache, opt-in with
+                    <code>force-cache</code> or <code>revalidate</code>
+                  </li>
+                  <li>
+                    <code>revalidateTag()</code> is the preferred invalidation
+                    strategy
+                  </li>
+                  <li>
+                    Next.js 15 made caching opt-in (not opt-out) — a major
+                    behavioral change
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Streaming & Suspense</div>
+                <div class="topic-desc">
+                  Progressive rendering, loading.tsx, streaming SSR
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Streaming & Suspense</h3>
+              <p>
+                Streaming lets you progressively send UI from the server. Fast
+                parts render immediately; slow parts stream in when ready,
+                without blocking the whole page.
+              </p>
+              <pre><span class="kw">import</span> { <span class="tp">Suspense</span> } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="kw">export default function</span> <span class="fn">DashboardPage</span>() {
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;h1&gt;Dashboard&lt;/h1&gt;  <span class="cm">{/* renders instantly */}</span>
+
+      &lt;<span class="tp">Suspense</span> fallback={&lt;p&gt;Loading stats...&lt;/p&gt;}&gt;
+        &lt;<span class="fn">Stats</span> /&gt;  <span class="cm">{/* streams in when data is ready */}</span>
+      &lt;/<span class="tp">Suspense</span>&gt;
+
+      &lt;<span class="tp">Suspense</span> fallback={&lt;p&gt;Loading feed...&lt;/p&gt;}&gt;
+        &lt;<span class="fn">Feed</span> /&gt;   <span class="cm">{/* streams independently */}</span>
+      &lt;/<span class="tp">Suspense</span>&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="cm">// Each async component streams independently</span>
+<span class="kw">async function</span> <span class="fn">Stats</span>() {
+  <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">getStats</span>(); <span class="cm">// slow API call</span>
+  <span class="kw">return</span> &lt;div&gt;{data.visitors} visitors&lt;/div&gt;;
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Wrap slow async components in
+                    <code>&lt;Suspense&gt;</code> with a fallback
+                  </li>
+                  <li>
+                    <code>loading.tsx</code> is just a shortcut for a Suspense
+                    boundary around the page
+                  </li>
+                  <li>
+                    Each Suspense boundary streams independently — fast parts
+                    aren't blocked
+                  </li>
+                  <li>
+                    This is HTTP streaming — the browser starts rendering before
+                    all data is ready
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Static vs dynamic rendering</div>
+                <div class="topic-desc">
+                  SSG, SSR, ISR, PPR, when each is used
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Static vs Dynamic Rendering</h3>
+              <p>
+                Next.js automatically decides whether a route is
+                <strong>static</strong> (rendered at build time) or
+                <strong>dynamic</strong> (rendered at request time), based on
+                what your code does.
+              </p>
+              <pre><span class="cm">// STATIC (build time) — when the page has:</span>
+<span class="cm">// - No dynamic data fetching (or cached fetches)</span>
+<span class="cm">// - No dynamic APIs (cookies, headers, searchParams)</span>
+<span class="cm">// Result: pre-rendered HTML, served from CDN</span>
+
+<span class="cm">// DYNAMIC (request time) — triggered by:</span>
+<span class="cm">// - cookies(), headers() — reading request data</span>
+<span class="cm">// - searchParams — URL query parameters</span>
+<span class="cm">// - fetch with no-store — uncached data</span>
+<span class="cm">// Result: rendered fresh on every request</span>
+
+<span class="cm">// Force dynamic rendering:</span>
+<span class="kw">export const</span> dynamic = <span class="str">"force-dynamic"</span>;
+
+<span class="cm">// Force static rendering:</span>
+<span class="kw">export const</span> dynamic = <span class="str">"force-static"</span>;
+
+<span class="cm">// ISR (revalidate every N seconds):</span>
+<span class="kw">export const</span> revalidate = <span class="num">3600</span>; <span class="cm">// 1 hour</span></pre>
+              <div class="version-note">
+                <strong>Next.js 15 — Partial Prerendering (PPR):</strong> An
+                experimental feature that combines static and dynamic in ONE
+                page. The static shell is served instantly from CDN, and dynamic
+                parts stream in via Suspense. This is the future of Next.js
+                rendering.
+              </div>
+              <pre><span class="cm">// next.config.ts — enable PPR</span>
+<span class="kw">const</span> nextConfig = {
+  experimental: { ppr: <span class="str">"incremental"</span> }
+};
+
+<span class="cm">// app/page.tsx — opt-in per route</span>
+<span class="kw">export const</span> experimental_ppr = <span class="kw">true</span>;</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Next.js auto-detects static vs dynamic — you rarely need to
+                    configure it
+                  </li>
+                  <li>
+                    Using <code>cookies()</code>, <code>headers()</code>, or
+                    <code>searchParams</code> makes a route dynamic
+                  </li>
+                  <li>
+                    ISR: <code>export const revalidate = N</code> regenerates
+                    static pages periodically
+                  </li>
+                  <li>
+                    PPR (Next.js 15+) combines static shells with dynamic
+                    streamed content
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════ -->
+      <!-- PHASE 4: SERVER ACTIONS & MUTATIONS                -->
+      <!-- ═══════════════════════════════════════════════════ -->
+      <div class="phase">
+        <div class="phase-header" style="background: #fef3e2">
+          <div class="phase-num" style="background: #b45309; color: #fff">
+            4
+          </div>
+          <div class="phase-title" style="color: #78350f">
+            Server Actions & Mutations
+          </div>
+          <div class="phase-tag" style="background: #fcd34d; color: #78350f">
+            Week 5
+          </div>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            style="width: 100%; background: #b45309"
+          ></div>
+        </div>
+        <div class="phase-body">
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Server Actions basics</div>
+                <div class="topic-desc">
+                  "use server", form actions, inline actions
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Server Actions</h3>
+              <p>
+                Server Actions are
+                <strong>async functions that run on the server</strong>, called
+                directly from your UI. They replace API routes for mutations
+                (creating, updating, deleting data).
+              </p>
+              <pre><span class="cm">// app/actions.ts</span>
+<span class="str">"use server"</span>;
+
+<span class="kw">export async function</span> <span class="fn">createTodo</span>(formData: <span class="tp">FormData</span>) {
+  <span class="kw">const</span> title = formData.<span class="fn">get</span>(<span class="str">"title"</span>) <span class="kw">as</span> <span class="tp">string</span>;
+  <span class="kw">await</span> db.todo.<span class="fn">create</span>({ data: { title } });
+  <span class="fn">revalidatePath</span>(<span class="str">"/todos"</span>);
+}
+
+<span class="cm">// app/todos/page.tsx — use the action directly in a form</span>
+<span class="kw">import</span> { createTodo } <span class="kw">from</span> <span class="str">"../actions"</span>;
+
+<span class="kw">export default function</span> <span class="fn">TodosPage</span>() {
+  <span class="kw">return</span> (
+    &lt;form action={createTodo}&gt;
+      &lt;input name=<span class="str">"title"</span> placeholder=<span class="str">"New todo..."</span> /&gt;
+      &lt;button type=<span class="str">"submit"</span>&gt;Add&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</pre>
+              <div class="version-note">
+                <strong>Next.js 14:</strong> Server Actions became stable.
+                Before that (Next.js 13), they were experimental and required
+                <code>experimental.serverActions: true</code> in config.
+              </div>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>"use server"</code> marks functions as server-only —
+                    they never run in the browser
+                  </li>
+                  <li>
+                    Pass them directly to
+                    <code>&lt;form action={...}&gt;</code> — works without
+                    JavaScript
+                  </li>
+                  <li>
+                    Call <code>revalidatePath()</code> or
+                    <code>revalidateTag()</code> after mutations to refresh data
+                  </li>
+                  <li>
+                    Server Actions are the recommended way to mutate data in
+                    Next.js
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Form handling</div>
+                <div class="topic-desc">
+                  useActionState, useFormStatus, validation
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Advanced Form Handling</h3>
+              <p>
+                For forms with loading states and validation feedback, use
+                <code>useActionState</code> and <code>useFormStatus</code>.
+              </p>
+              <pre><span class="cm">// actions.ts</span>
+<span class="str">"use server"</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">"zod"</span>;
+
+<span class="kw">const</span> Schema = z.<span class="fn">object</span>({
+  email: z.<span class="fn">string</span>().<span class="fn">email</span>(<span class="str">"Invalid email"</span>),
+  message: z.<span class="fn">string</span>().<span class="fn">min</span>(<span class="num">10</span>, <span class="str">"Too short"</span>),
+});
+
+<span class="kw">type</span> <span class="tp">State</span> = { errors?: <span class="tp">Record</span>&lt;<span class="tp">string</span>, <span class="tp">string</span>&gt;; success?: <span class="tp">boolean</span> };
+
+<span class="kw">export async function</span> <span class="fn">submitForm</span>(prev: <span class="tp">State</span>, formData: <span class="tp">FormData</span>): <span class="tp">Promise</span>&lt;<span class="tp">State</span>&gt; {
+  <span class="kw">const</span> parsed = Schema.<span class="fn">safeParse</span>(Object.<span class="fn">fromEntries</span>(formData));
+  <span class="kw">if</span> (!parsed.success) {
+    <span class="kw">const</span> errors: <span class="tp">Record</span>&lt;<span class="tp">string</span>, <span class="tp">string</span>&gt; = {};
+    parsed.error.issues.<span class="fn">forEach</span>(i =&gt; errors[i.path[<span class="num">0</span>]] = i.message);
+    <span class="kw">return</span> { errors };
+  }
+  <span class="kw">await</span> <span class="fn">sendEmail</span>(parsed.data);
+  <span class="kw">return</span> { success: <span class="kw">true</span> };
+}</pre>
+              <pre><span class="str">"use client"</span>;
+<span class="kw">import</span> { useActionState } <span class="kw">from</span> <span class="str">"react"</span>;
+<span class="kw">import</span> { useFormStatus } <span class="kw">from</span> <span class="str">"react-dom"</span>;
+
+<span class="kw">function</span> <span class="fn">SubmitBtn</span>() {
+  <span class="kw">const</span> { pending } = <span class="fn">useFormStatus</span>();
+  <span class="kw">return</span> &lt;button disabled={pending}&gt;{pending ? <span class="str">"Sending..."</span> : <span class="str">"Send"</span>}&lt;/button&gt;;
+}
+
+<span class="kw">export function</span> <span class="fn">ContactForm</span>() {
+  <span class="kw">const</span> [state, action] = <span class="fn">useActionState</span>(submitForm, {});
+  <span class="kw">return</span> (
+    &lt;form action={action}&gt;
+      &lt;input name=<span class="str">"email"</span> /&gt;
+      {state.errors?.email &amp;&amp; &lt;p&gt;{state.errors.email}&lt;/p&gt;}
+      &lt;textarea name=<span class="str">"message"</span> /&gt;
+      {state.success &amp;&amp; &lt;p&gt;Sent!&lt;/p&gt;}
+      &lt;<span class="fn">SubmitBtn</span> /&gt;
+    &lt;/form&gt;
+  );
+}</pre>
+              <div class="version-note">
+                <strong>Next.js 15 / React 19:</strong>
+                <code>useFormState</code> was renamed to
+                <code>useActionState</code> and moved from
+                <code>"react-dom"</code> to <code>"react"</code>.
+              </div>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>useActionState(action, initialState)</code> manages
+                    form state + action binding
+                  </li>
+                  <li>
+                    <code>useFormStatus()</code> provides
+                    <code>pending</code> state — must be inside the
+                    <code>&lt;form&gt;</code>
+                  </li>
+                  <li>
+                    Validate with Zod on the server — return errors as
+                    structured state
+                  </li>
+                  <li>
+                    Forms work without JS (progressive enhancement) — actions
+                    are just HTTP POST
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Optimistic updates</div>
+                <div class="topic-desc">useOptimistic, instant UI feedback</div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Optimistic Updates</h3>
+              <p>
+                Show changes immediately in the UI before the server confirms
+                them. If the action fails, the optimistic state automatically
+                reverts.
+              </p>
+              <pre><span class="str">"use client"</span>;
+<span class="kw">import</span> { useOptimistic } <span class="kw">from</span> <span class="str">"react"</span>;
+<span class="kw">import</span> { toggleTodo } <span class="kw">from</span> <span class="str">"./actions"</span>;
+
+<span class="kw">export function</span> <span class="fn">TodoList</span>({ todos }: { todos: <span class="tp">Todo</span>[] }) {
+  <span class="kw">const</span> [optimistic, addOptimistic] = <span class="fn">useOptimistic</span>(
+    todos,
+    (state, id: <span class="tp">number</span>) =&gt;
+      state.<span class="fn">map</span>(t =&gt; t.id === id ? { ...t, done: !t.done } : t)
+  );
+
+  <span class="kw">async function</span> <span class="fn">handleToggle</span>(id: <span class="tp">number</span>) {
+    <span class="fn">addOptimistic</span>(id);           <span class="cm">// instant UI update</span>
+    <span class="kw">await</span> <span class="fn">toggleTodo</span>(id);        <span class="cm">// server action (may take time)</span>
+  }
+
+  <span class="kw">return</span> (
+    &lt;ul&gt;
+      {optimistic.<span class="fn">map</span>(todo =&gt; (
+        &lt;li key={todo.id} onClick={() =&gt; <span class="fn">handleToggle</span>(todo.id)}&gt;
+          {todo.done ? <span class="str">"✓"</span> : <span class="str">"○"</span>} {todo.title}
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>useOptimistic(data, updateFn)</code> returns
+                    optimistic state + setter
+                  </li>
+                  <li>
+                    Call the setter before the server action for instant
+                    feedback
+                  </li>
+                  <li>
+                    State auto-reverts if the server action throws an error
+                  </li>
+                  <li>
+                    React 19 feature — works natively with Next.js 15+ Server
+                    Actions
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Revalidation strategies</div>
+                <div class="topic-desc">
+                  revalidatePath, revalidateTag, on-demand ISR
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Revalidation Strategies</h3>
+              <p>
+                After mutating data with Server Actions, you need to tell
+                Next.js to refresh the cached data. There are two main
+                approaches.
+              </p>
+              <pre><span class="str">"use server"</span>;
+<span class="kw">import</span> { revalidatePath, revalidateTag } <span class="kw">from</span> <span class="str">"next/cache"</span>;
+
+<span class="kw">export async function</span> <span class="fn">createPost</span>(formData: <span class="tp">FormData</span>) {
+  <span class="kw">await</span> db.post.<span class="fn">create</span>({ ... });
+
+  <span class="cm">// Option 1: revalidate by path</span>
+  <span class="fn">revalidatePath</span>(<span class="str">"/blog"</span>);        <span class="cm">// refresh /blog page</span>
+  <span class="fn">revalidatePath</span>(<span class="str">"/blog"</span>, <span class="str">"layout"</span>); <span class="cm">// refresh layout + all child pages</span>
+
+  <span class="cm">// Option 2: revalidate by tag (preferred — more precise)</span>
+  <span class="fn">revalidateTag</span>(<span class="str">"posts"</span>);         <span class="cm">// refresh all fetches tagged "posts"</span>
+}
+
+<span class="cm">// Tag your fetches:</span>
+<span class="kw">const</span> posts = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">"/api/posts"</span>, {
+  next: { tags: [<span class="str">"posts"</span>] }
+});</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>revalidatePath(path)</code> refreshes a specific route
+                  </li>
+                  <li>
+                    <code>revalidateTag(tag)</code> refreshes all fetches with
+                    that tag — more granular
+                  </li>
+                  <li>
+                    Call them in Server Actions after create/update/delete
+                    operations
+                  </li>
+                  <li>
+                    Tags let you invalidate related data across multiple pages
+                    at once
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">File uploads</div>
+                <div class="topic-desc">
+                  FormData, file handling, size limits
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>File Uploads with Server Actions</h3>
+              <pre><span class="str">"use server"</span>;
+<span class="kw">import</span> { writeFile } <span class="kw">from</span> <span class="str">"fs/promises"</span>;
+<span class="kw">import</span> { join } <span class="kw">from</span> <span class="str">"path"</span>;
+
+<span class="kw">export async function</span> <span class="fn">uploadFile</span>(formData: <span class="tp">FormData</span>) {
+  <span class="kw">const</span> file = formData.<span class="fn">get</span>(<span class="str">"file"</span>) <span class="kw">as</span> <span class="tp">File</span>;
+  <span class="kw">if</span> (!file || file.size === <span class="num">0</span>) <span class="kw">return</span> { error: <span class="str">"No file"</span> };
+  <span class="kw">if</span> (file.size &gt; <span class="num">5</span> * <span class="num">1024</span> * <span class="num">1024</span>) <span class="kw">return</span> { error: <span class="str">"Max 5MB"</span> };
+
+  <span class="kw">const</span> bytes = <span class="kw">await</span> file.<span class="fn">arrayBuffer</span>();
+  <span class="kw">const</span> buffer = Buffer.<span class="fn">from</span>(bytes);
+  <span class="kw">const</span> path = join(process.<span class="fn">cwd</span>(), <span class="str">"public/uploads"</span>, file.name);
+  <span class="kw">await</span> <span class="fn">writeFile</span>(path, buffer);
+  <span class="kw">return</span> { success: <span class="kw">true</span>, url: <span class="str">`/uploads/${file.name}`</span> };
+}</pre>
+              <pre><span class="str">"use client"</span>;
+<span class="kw">export function</span> <span class="fn">UploadForm</span>() {
+  <span class="kw">return</span> (
+    &lt;form action={uploadFile}&gt;
+      &lt;input type=<span class="str">"file"</span> name=<span class="str">"file"</span> accept=<span class="str">"image/*"</span> /&gt;
+      &lt;button&gt;Upload&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Files in FormData arrive as <code>File</code> objects —
+                    convert to <code>Buffer</code> for server use
+                  </li>
+                  <li>
+                    Set body size limits in <code>next.config.ts</code>:
+                    <code>experimental.serverActions.bodySizeLimit</code>
+                  </li>
+                  <li>
+                    For production, upload to cloud storage (S3, Cloudflare R2)
+                    not local disk
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Server Actions security</div>
+                <div class="topic-desc">
+                  Auth checks, rate limiting, CSRF protection
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Server Actions Security</h3>
+              <p>
+                Server Actions are HTTP POST endpoints under the hood.
+                <strong>Always validate and authorize</strong> — anyone can call
+                them.
+              </p>
+              <pre><span class="str">"use server"</span>;
+<span class="kw">import</span> { auth } <span class="kw">from</span> <span class="str">"./auth"</span>;
+
+<span class="kw">export async function</span> <span class="fn">deletePost</span>(postId: <span class="tp">number</span>) {
+  <span class="cm">// 1. ALWAYS check authentication</span>
+  <span class="kw">const</span> session = <span class="kw">await</span> <span class="fn">auth</span>();
+  <span class="kw">if</span> (!session) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">"Unauthorized"</span>);
+
+  <span class="cm">// 2. ALWAYS check authorization</span>
+  <span class="kw">const</span> post = <span class="kw">await</span> db.post.<span class="fn">findUnique</span>({ where: { id: postId } });
+  <span class="kw">if</span> (post?.authorId !== session.user.id) {
+    <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">"Forbidden"</span>);
+  }
+
+  <span class="cm">// 3. ALWAYS validate input</span>
+  <span class="kw">if</span> (<span class="kw">typeof</span> postId !== <span class="str">"number"</span> || postId &lt; <span class="num">1</span>) {
+    <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">"Invalid ID"</span>);
+  }
+
+  <span class="kw">await</span> db.post.<span class="fn">delete</span>({ where: { id: postId } });
+  <span class="fn">revalidatePath</span>(<span class="str">"/blog"</span>);
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Server Actions are public endpoints — always authenticate
+                    and authorize
+                  </li>
+                  <li>
+                    Next.js provides built-in CSRF protection via encrypted
+                    action IDs
+                  </li>
+                  <li>
+                    Validate all inputs server-side (Zod) — never trust client
+                    data
+                  </li>
+                  <li>
+                    Use closures carefully — captured variables are sent to the
+                    client
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════ -->
+      <!-- PHASE 5: API & BACKEND                             -->
+      <!-- ═══════════════════════════════════════════════════ -->
+      <div class="phase">
+        <div class="phase-header" style="background: #faece7">
+          <div class="phase-num" style="background: #993c1d; color: #fff">
+            5
+          </div>
+          <div class="phase-title" style="color: #712b13">
+            API & Backend Integration
+          </div>
+          <div class="phase-tag" style="background: #f5c4b3; color: #712b13">
+            Week 6
+          </div>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            style="width: 100%; background: #993c1d"
+          ></div>
+        </div>
+        <div class="phase-body">
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Route Handlers</div>
+                <div class="topic-desc">
+                  GET, POST, route.ts, typed API responses
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Route Handlers (API Routes)</h3>
+              <p>
+                Route handlers create API endpoints using
+                <code>route.ts</code> files. They export functions named after
+                HTTP methods.
+              </p>
+              <pre><span class="cm">// app/api/users/route.ts</span>
+<span class="kw">import</span> { <span class="tp">NextRequest</span>, <span class="tp">NextResponse</span> } <span class="kw">from</span> <span class="str">"next/server"</span>;
+
+<span class="kw">export async function</span> <span class="fn">GET</span>(request: <span class="tp">NextRequest</span>) {
+  <span class="kw">const</span> users = <span class="kw">await</span> db.user.<span class="fn">findMany</span>();
+  <span class="kw">return</span> NextResponse.<span class="fn">json</span>(users);
+}
+
+<span class="kw">export async function</span> <span class="fn">POST</span>(request: <span class="tp">NextRequest</span>) {
+  <span class="kw">const</span> body = <span class="kw">await</span> request.<span class="fn">json</span>();
+  <span class="kw">const</span> user = <span class="kw">await</span> db.user.<span class="fn">create</span>({ data: body });
+  <span class="kw">return</span> NextResponse.<span class="fn">json</span>(user, { status: <span class="num">201</span> });
+}
+
+<span class="cm">// app/api/users/[id]/route.ts — dynamic</span>
+<span class="kw">export async function</span> <span class="fn">GET</span>(
+  request: <span class="tp">NextRequest</span>,
+  { params }: { params: <span class="tp">Promise</span>&lt;{ id: <span class="tp">string</span> }&gt; }
+) {
+  <span class="kw">const</span> { id } = <span class="kw">await</span> params;
+  <span class="kw">const</span> user = <span class="kw">await</span> db.user.<span class="fn">findUnique</span>({ where: { id: <span class="fn">Number</span>(id) } });
+  <span class="kw">if</span> (!user) <span class="kw">return</span> NextResponse.<span class="fn">json</span>({ error: <span class="str">"Not found"</span> }, { status: <span class="num">404</span> });
+  <span class="kw">return</span> NextResponse.<span class="fn">json</span>(user);
+}</pre>
+              <div class="version-note">
+                <strong>Next.js 15:</strong> <code>GET</code> route handlers are
+                <strong>no longer cached by default</strong>. In Next.js 14,
+                they were treated as static unless they used dynamic APIs.
+              </div>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Export <code>GET</code>, <code>POST</code>,
+                    <code>PUT</code>, <code>PATCH</code>,
+                    <code>DELETE</code> from
+                    <code>route.ts</code>
+                  </li>
+                  <li>
+                    Use <code>NextResponse.json()</code> for JSON responses
+                  </li>
+                  <li>
+                    Prefer Server Actions for mutations; route handlers for
+                    external APIs/webhooks
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Middleware</div>
+                <div class="topic-desc">
+                  Auth, redirects, headers, geolocation
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Middleware</h3>
+              <p>
+                Middleware runs <strong>before every matched request</strong>.
+                It's defined in a single <code>middleware.ts</code> file at the
+                project root.
+              </p>
+              <pre><span class="cm">// middleware.ts (project root or src/)</span>
+<span class="kw">import</span> { <span class="tp">NextRequest</span>, <span class="tp">NextResponse</span> } <span class="kw">from</span> <span class="str">"next/server"</span>;
+
+<span class="kw">export function</span> <span class="fn">middleware</span>(request: <span class="tp">NextRequest</span>) {
+  <span class="kw">const</span> token = request.cookies.<span class="fn">get</span>(<span class="str">"session"</span>)?.value;
+
+  <span class="kw">if</span> (!token &amp;&amp; request.nextUrl.pathname.<span class="fn">startsWith</span>(<span class="str">"/dashboard"</span>)) {
+    <span class="kw">return</span> NextResponse.<span class="fn">redirect</span>(
+      <span class="kw">new</span> <span class="fn">URL</span>(<span class="str">"/login"</span>, request.url)
+    );
+  }
+
+  <span class="kw">return</span> NextResponse.<span class="fn">next</span>();
+}
+
+<span class="kw">export const</span> config = {
+  matcher: [<span class="str">"/dashboard/:path*"</span>, <span class="str">"/api/:path*"</span>],
+};</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    One <code>middleware.ts</code> per project — runs on the
+                    Edge runtime
+                  </li>
+                  <li>
+                    Use <code>matcher</code> to limit which routes trigger
+                    middleware
+                  </li>
+                  <li>
+                    Common uses: auth redirects, A/B testing, locale detection,
+                    rate limiting
+                  </li>
+                  <li>
+                    Middleware can't access databases or Node.js APIs (Edge
+                    only)
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Authentication</div>
+                <div class="topic-desc">
+                  NextAuth/Auth.js, sessions, protecting routes
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Authentication with Auth.js</h3>
+              <p>
+                <strong>Auth.js</strong> (formerly NextAuth.js) is the standard
+                auth solution for Next.js. It supports OAuth, credentials, magic
+                links, and more.
+              </p>
+              <pre><span class="cm">// auth.ts — configure auth</span>
+<span class="kw">import</span> NextAuth <span class="kw">from</span> <span class="str">"next-auth"</span>;
+<span class="kw">import</span> GitHub <span class="kw">from</span> <span class="str">"next-auth/providers/github"</span>;
+
+<span class="kw">export const</span> { handlers, signIn, signOut, auth } = <span class="fn">NextAuth</span>({
+  providers: [<span class="fn">GitHub</span>()],
+});
+
+<span class="cm">// app/api/auth/[...nextauth]/route.ts</span>
+<span class="kw">import</span> { handlers } <span class="kw">from</span> <span class="str">"@/auth"</span>;
+<span class="kw">export const</span> { GET, POST } = handlers;
+
+<span class="cm">// Protect a Server Component</span>
+<span class="kw">import</span> { auth } <span class="kw">from</span> <span class="str">"@/auth"</span>;
+<span class="kw">export default async function</span> <span class="fn">DashboardPage</span>() {
+  <span class="kw">const</span> session = <span class="kw">await</span> <span class="fn">auth</span>();
+  <span class="kw">if</span> (!session) <span class="fn">redirect</span>(<span class="str">"/login"</span>);
+  <span class="kw">return</span> &lt;h1&gt;Welcome {session.user?.name}&lt;/h1&gt;;
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Auth.js v5 works with the App Router —
+                    <code>auth()</code> in Server Components
+                  </li>
+                  <li>
+                    Check sessions in middleware for route-level protection
+                  </li>
+                  <li>
+                    Supports 50+ OAuth providers (Google, GitHub, Discord, etc.)
+                  </li>
+                  <li>
+                    Use <code>signIn()</code> and <code>signOut()</code> Server
+                    Actions for auth flows
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Database integration</div>
+                <div class="topic-desc">
+                  Prisma, Drizzle, connection pooling
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Database Integration</h3>
+              <p>
+                Next.js works with any database. <strong>Prisma</strong> and
+                <strong>Drizzle ORM</strong> are the most popular choices.
+              </p>
+              <pre><span class="cm">// lib/db.ts — Prisma setup (singleton pattern)</span>
+<span class="kw">import</span> { <span class="tp">PrismaClient</span> } <span class="kw">from</span> <span class="str">"@prisma/client"</span>;
+
+<span class="kw">const</span> globalForPrisma = globalThis <span class="kw">as</span> <span class="tp">unknown</span> <span class="kw">as</span> {
+  prisma: <span class="tp">PrismaClient</span> | <span class="tp">undefined</span>;
+};
+
+<span class="kw">export const</span> db = globalForPrisma.prisma ?? <span class="kw">new</span> <span class="fn">PrismaClient</span>();
+
+<span class="kw">if</span> (process.env.NODE_ENV !== <span class="str">"production"</span>) {
+  globalForPrisma.prisma = db;
+}
+
+<span class="cm">// Use directly in Server Components:</span>
+<span class="kw">export default async function</span> <span class="fn">PostsPage</span>() {
+  <span class="kw">const</span> posts = <span class="kw">await</span> db.post.<span class="fn">findMany</span>({
+    include: { author: <span class="kw">true</span> },
+    orderBy: { createdAt: <span class="str">"desc"</span> },
+  });
+  <span class="kw">return</span> posts.<span class="fn">map</span>(p =&gt; &lt;article key={p.id}&gt;...&lt;/article&gt;);
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Use the singleton pattern to avoid creating multiple DB
+                    connections in dev
+                  </li>
+                  <li>
+                    Query directly in Server Components — no API layer needed
+                  </li>
+                  <li>
+                    For serverless (Vercel), use connection pooling (Prisma
+                    Accelerate, Neon, PlanetScale)
+                  </li>
+                  <li>Never import database code in Client Components</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Environment variables</div>
+                <div class="topic-desc">
+                  NEXT_PUBLIC_, .env files, runtime config
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Environment Variables</h3>
+              <pre><span class="cm">// .env.local — secrets (gitignored)</span>
+DATABASE_URL=<span class="str">"postgresql://..."</span>
+AUTH_SECRET=<span class="str">"super-secret-key"</span>
+
+<span class="cm">// NEXT_PUBLIC_ prefix → exposed to the browser</span>
+NEXT_PUBLIC_API_URL=<span class="str">"https://api.example.com"</span>
+
+<span class="cm">// Server-only (no prefix) → NEVER sent to the browser</span>
+STRIPE_SECRET_KEY=<span class="str">"sk_live_..."</span></pre>
+              <pre><span class="cm">// Access in code:</span>
+<span class="cm">// Server Components, Server Actions, Route Handlers:</span>
+<span class="kw">const</span> dbUrl = process.env.DATABASE_URL;       <span class="cm">// ✓ works</span>
+<span class="kw">const</span> apiUrl = process.env.NEXT_PUBLIC_API_URL; <span class="cm">// ✓ works</span>
+
+<span class="cm">// Client Components:</span>
+<span class="kw">const</span> apiUrl = process.env.NEXT_PUBLIC_API_URL; <span class="cm">// ✓ works</span>
+<span class="kw">const</span> dbUrl = process.env.DATABASE_URL;         <span class="cm">// ✗ undefined!</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>NEXT_PUBLIC_</code> prefix = available in browser (be
+                    careful with secrets!)
+                  </li>
+                  <li>
+                    No prefix = server-only (safe for API keys, database URLs)
+                  </li>
+                  <li>
+                    Load order: <code>.env</code> → <code>.env.local</code> →
+                    <code>.env.development</code>/<code>.env.production</code>
+                  </li>
+                  <li>
+                    Restart dev server after changing <code>.env</code> files
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Edge vs Node runtime</div>
+                <div class="topic-desc">
+                  Runtime selection, limitations, use cases
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Edge vs Node.js Runtime</h3>
+              <p>
+                Next.js lets you choose the runtime for each route:
+                <strong>Node.js</strong> (default, full API) or
+                <strong>Edge</strong> (fast, limited API, global distribution).
+              </p>
+              <pre><span class="cm">// Default: Node.js runtime (full API)</span>
+<span class="kw">export const</span> runtime = <span class="str">"nodejs"</span>;
+
+<span class="cm">// Edge runtime: faster cold starts, limited APIs</span>
+<span class="kw">export const</span> runtime = <span class="str">"edge"</span>;
+
+<span class="cm">// Edge limitations:</span>
+<span class="cm">// ✗ No fs (file system)</span>
+<span class="cm">// ✗ No native Node.js modules</span>
+<span class="cm">// ✗ Limited npm packages</span>
+<span class="cm">// ✗ Max execution time (usually 30s)</span>
+<span class="cm">// ✓ Faster cold starts</span>
+<span class="cm">// ✓ Runs closer to users (CDN edge locations)</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Node.js runtime = default, full API access, good for most
+                    use cases
+                  </li>
+                  <li>
+                    Edge runtime = faster, global, but limited (no fs, no native
+                    modules)
+                  </li>
+                  <li>Middleware always runs on Edge</li>
+                  <li>
+                    Use Edge for simple auth checks, redirects, A/B testing;
+                    Node for DB queries
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════ -->
+      <!-- PHASE 6: STYLING & ASSETS                          -->
+      <!-- ═══════════════════════════════════════════════════ -->
+      <div class="phase">
+        <div class="phase-header" style="background: #e0f2f1">
+          <div class="phase-num" style="background: #00796b; color: #fff">
+            6
+          </div>
+          <div class="phase-title" style="color: #004d40">Styling & Assets</div>
+          <div class="phase-tag" style="background: #80cbc4; color: #004d40">
+            Week 7
+          </div>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            style="width: 100%; background: #00796b"
+          ></div>
+        </div>
+        <div class="phase-body">
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">CSS Modules & Tailwind</div>
+                <div class="topic-desc">
+                  Scoped CSS, utility-first, global styles
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>CSS Modules & Tailwind CSS</h3>
+              <p>
+                Next.js supports <strong>CSS Modules</strong> (scoped by
+                default) and <strong>Tailwind CSS</strong> (utility-first) out
+                of the box.
+              </p>
+              <pre><span class="cm">/* components/Button.module.css */</span>
+.<span class="fn">btn</span> { padding: 8px 16px; border-radius: 6px; font-weight: 500; }
+.<span class="fn">primary</span> { background: #1a56db; color: white; }
+.<span class="fn">secondary</span> { background: #e5e7eb; color: #111; }</pre>
+              <pre><span class="cm">// components/Button.tsx — CSS Modules (auto-scoped)</span>
+<span class="kw">import</span> styles <span class="kw">from</span> <span class="str">"./Button.module.css"</span>;
+
+<span class="kw">export function</span> <span class="fn">Button</span>({ variant = <span class="str">"primary"</span> }) {
+  <span class="kw">return</span> &lt;button className={<span class="str">`${styles.btn} ${styles[variant]}`</span>}&gt;Click&lt;/button&gt;;
+}
+
+<span class="cm">// With Tailwind CSS (no import needed)</span>
+<span class="kw">export function</span> <span class="fn">Button</span>() {
+  <span class="kw">return</span> (
+    &lt;button className=<span class="str">"px-4 py-2 bg-blue-600 text-white rounded-md
+                       hover:bg-blue-700 transition-colors"</span>&gt;
+      Click
+    &lt;/button&gt;
+  );
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    CSS Modules: <code>*.module.css</code> — class names scoped
+                    automatically
+                  </li>
+                  <li>
+                    Tailwind: configured by <code>create-next-app</code> —
+                    utility classes, no CSS files
+                  </li>
+                  <li>
+                    Global CSS goes in <code>app/globals.css</code>, imported in
+                    root layout
+                  </li>
+                  <li>Both work with Server and Client Components</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">next/font</div>
+                <div class="topic-desc">
+                  Font optimization, Google Fonts, local fonts
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Font Optimization with next/font</h3>
+              <p>
+                <code>next/font</code> automatically optimizes fonts: self-hosts
+                them, eliminates layout shift, and supports Google Fonts and
+                local fonts.
+              </p>
+              <pre><span class="cm">// app/layout.tsx — Google Font</span>
+<span class="kw">import</span> { Inter } <span class="kw">from</span> <span class="str">"next/font/google"</span>;
+
+<span class="kw">const</span> inter = <span class="fn">Inter</span>({ subsets: [<span class="str">"latin"</span>] });
+
+<span class="kw">export default function</span> <span class="fn">RootLayout</span>({ children }) {
+  <span class="kw">return</span> (
+    &lt;html lang=<span class="str">"en"</span> className={inter.className}&gt;
+      &lt;body&gt;{children}&lt;/body&gt;
+    &lt;/html&gt;
+  );
+}
+
+<span class="cm">// Local font</span>
+<span class="kw">import</span> localFont <span class="kw">from</span> <span class="str">"next/font/local"</span>;
+<span class="kw">const</span> myFont = <span class="fn">localFont</span>({ src: <span class="str">"./fonts/MyFont.woff2"</span> });</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Google Fonts are self-hosted at build time — no external
+                    requests
+                  </li>
+                  <li>
+                    Automatic <code>font-display: swap</code> and
+                    <code>size-adjust</code> — zero layout shift
+                  </li>
+                  <li>
+                    Use CSS variable mode for Tailwind:
+                    <code>Inter({ variable: "--font-inter" })</code>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">next/image</div>
+                <div class="topic-desc">
+                  Image optimization, responsive images, lazy loading
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Image Optimization with next/image</h3>
+              <p>
+                The <code>&lt;Image&gt;</code> component automatically optimizes
+                images: resizes, converts to WebP/AVIF, lazy loads, and prevents
+                layout shift.
+              </p>
+              <pre><span class="kw">import</span> <span class="tp">Image</span> <span class="kw">from</span> <span class="str">"next/image"</span>;
+
+<span class="cm">// Local image (auto width/height from import)</span>
+<span class="kw">import</span> heroImg <span class="kw">from</span> <span class="str">"./hero.png"</span>;
+&lt;<span class="tp">Image</span> src={heroImg} alt=<span class="str">"Hero"</span> priority /&gt;
+
+<span class="cm">// Remote image (must specify dimensions)</span>
+&lt;<span class="tp">Image</span>
+  src=<span class="str">"https://example.com/photo.jpg"</span>
+  alt=<span class="str">"Photo"</span>
+  width={<span class="num">800</span>}
+  height={<span class="num">600</span>}
+  className=<span class="str">"rounded-lg"</span>
+/&gt;
+
+<span class="cm">// Responsive fill (fills parent container)</span>
+&lt;div className=<span class="str">"relative h-64"</span>&gt;
+  &lt;<span class="tp">Image</span> src=<span class="str">"/bg.jpg"</span> alt=<span class="str">"BG"</span> fill className=<span class="str">"object-cover"</span> /&gt;
+&lt;/div&gt;</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Always use <code>&lt;Image&gt;</code> instead of
+                    <code>&lt;img&gt;</code> for automatic optimization
+                  </li>
+                  <li>
+                    Add <code>priority</code> to above-the-fold images (LCP
+                    optimization)
+                  </li>
+                  <li>
+                    Use <code>fill</code> prop for images that fill their parent
+                    container
+                  </li>
+                  <li>
+                    Configure <code>remotePatterns</code> in
+                    <code>next.config.ts</code> for external image domains
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">next/script</div>
+                <div class="topic-desc">
+                  Third-party scripts, loading strategies
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Script Optimization</h3>
+              <pre><span class="kw">import</span> <span class="tp">Script</span> <span class="kw">from</span> <span class="str">"next/script"</span>;
+
+<span class="cm">// Analytics — load after page is interactive</span>
+&lt;<span class="tp">Script</span>
+  src=<span class="str">"https://www.googletagmanager.com/gtag/js?id=G-XXX"</span>
+  strategy=<span class="str">"afterInteractive"</span>
+/&gt;
+
+<span class="cm">// Chat widget — load when browser is idle</span>
+&lt;<span class="tp">Script</span>
+  src=<span class="str">"https://widget.intercom.io/widget/xxx"</span>
+  strategy=<span class="str">"lazyOnload"</span>
+/&gt;
+
+<span class="cm">// Critical — load before page hydrates</span>
+&lt;<span class="tp">Script</span>
+  src=<span class="str">"/critical.js"</span>
+  strategy=<span class="str">"beforeInteractive"</span>
+/&gt;</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>afterInteractive</code> (default) — loads after page
+                    is interactive
+                  </li>
+                  <li>
+                    <code>lazyOnload</code> — loads during idle time (lowest
+                    priority)
+                  </li>
+                  <li>
+                    <code>beforeInteractive</code> — loads before hydration (use
+                    sparingly)
+                  </li>
+                  <li>Prevents third-party scripts from blocking page load</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Theming & dark mode</div>
+                <div class="topic-desc">
+                  next-themes, CSS variables, system preference
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Theming & Dark Mode</h3>
+              <pre><span class="cm">// Install: npm install next-themes</span>
+<span class="cm">// app/providers.tsx</span>
+<span class="str">"use client"</span>;
+<span class="kw">import</span> { <span class="tp">ThemeProvider</span> } <span class="kw">from</span> <span class="str">"next-themes"</span>;
+
+<span class="kw">export function</span> <span class="fn">Providers</span>({ children }: { children: <span class="tp">React.ReactNode</span> }) {
+  <span class="kw">return</span> (
+    &lt;<span class="tp">ThemeProvider</span> attribute=<span class="str">"class"</span> defaultTheme=<span class="str">"system"</span>&gt;
+      {children}
+    &lt;/<span class="tp">ThemeProvider</span>&gt;
+  );
+}
+
+<span class="cm">// Toggle button</span>
+<span class="str">"use client"</span>;
+<span class="kw">import</span> { useTheme } <span class="kw">from</span> <span class="str">"next-themes"</span>;
+
+<span class="kw">export function</span> <span class="fn">ThemeToggle</span>() {
+  <span class="kw">const</span> { theme, setTheme } = <span class="fn">useTheme</span>();
+  <span class="kw">return</span> (
+    &lt;button onClick={() =&gt; <span class="fn">setTheme</span>(theme === <span class="str">"dark"</span> ? <span class="str">"light"</span> : <span class="str">"dark"</span>)}&gt;
+      Toggle
+    &lt;/button&gt;
+  );
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>next-themes</code> handles dark mode with zero flash
+                    on load
+                  </li>
+                  <li>
+                    Use <code>attribute="class"</code> for Tailwind's
+                    <code>dark:</code> variant
+                  </li>
+                  <li>Supports system preference detection automatically</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Component libraries</div>
+                <div class="topic-desc">
+                  shadcn/ui, Radix, Headless UI integration
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Component Libraries</h3>
+              <p>
+                <strong>shadcn/ui</strong> is the most popular component library
+                for Next.js + Tailwind. It copies components into your project
+                (not a dependency).
+              </p>
+              <pre><span class="cm"># Initialize shadcn/ui</span>
+npx shadcn@latest init
+
+<span class="cm"># Add components (copies code into your project)</span>
+npx shadcn@latest add button
+npx shadcn@latest add dialog
+npx shadcn@latest add form
+
+<span class="cm">// Usage</span>
+<span class="kw">import</span> { <span class="tp">Button</span> } <span class="kw">from</span> <span class="str">"@/components/ui/button"</span>;
+
+&lt;<span class="tp">Button</span> variant=<span class="str">"outline"</span> size=<span class="str">"lg"</span>&gt;Click me&lt;/<span class="tp">Button</span>&gt;</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    shadcn/ui copies components into
+                    <code>components/ui/</code> — you own the code
+                  </li>
+                  <li>
+                    Built on Radix UI primitives — fully accessible, unstyled
+                    headless components
+                  </li>
+                  <li>
+                    Works perfectly with Server Components (most are client-only
+                    by nature)
+                  </li>
+                  <li>
+                    Alternative: Headless UI (by Tailwind Labs) for simpler
+                    needs
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════ -->
+      <!-- PHASE 7: PERFORMANCE & PRODUCTION                  -->
+      <!-- ═══════════════════════════════════════════════════ -->
+      <div class="phase">
+        <div class="phase-header" style="background: #fff8e1">
+          <div class="phase-num" style="background: #f59e0b; color: #fff">
+            7
+          </div>
+          <div class="phase-title" style="color: #78350f">
+            Performance & Production
+          </div>
+          <div class="phase-tag" style="background: #fde68a; color: #78350f">
+            Week 8
+          </div>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            style="width: 100%; background: #f59e0b"
+          ></div>
+        </div>
+        <div class="phase-body">
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Code splitting & lazy loading</div>
+                <div class="topic-desc">
+                  dynamic imports, React.lazy, route-based splitting
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Code Splitting & Lazy Loading</h3>
+              <p>
+                Next.js automatically code-splits by route. For component-level
+                splitting, use <code>next/dynamic</code>.
+              </p>
+              <pre><span class="kw">import</span> dynamic <span class="kw">from</span> <span class="str">"next/dynamic"</span>;
+
+<span class="cm">// Lazy load a heavy component (only loads when rendered)</span>
+<span class="kw">const</span> HeavyChart = <span class="fn">dynamic</span>(() =&gt; <span class="kw">import</span>(<span class="str">"./HeavyChart"</span>), {
+  loading: () =&gt; &lt;p&gt;Loading chart...&lt;/p&gt;,
+});
+
+<span class="cm">// Skip SSR (for browser-only components)</span>
+<span class="kw">const</span> MapComponent = <span class="fn">dynamic</span>(() =&gt; <span class="kw">import</span>(<span class="str">"./Map"</span>), {
+  ssr: <span class="kw">false</span>,
+  loading: () =&gt; &lt;div className=<span class="str">"h-96 bg-gray-100"</span> /&gt;,
+});
+
+<span class="cm">// Named export</span>
+<span class="kw">const</span> Modal = <span class="fn">dynamic</span>(() =&gt;
+  <span class="kw">import</span>(<span class="str">"./components"</span>).<span class="fn">then</span>(mod =&gt; mod.Modal)
+);</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Routes are auto-split — each page only loads its own JS
+                  </li>
+                  <li>
+                    <code>next/dynamic</code> for component-level lazy loading
+                  </li>
+                  <li>
+                    Use <code>ssr: false</code> for browser-only libraries
+                    (maps, editors, charts)
+                  </li>
+                  <li>
+                    Add <code>loading</code> fallback for better UX during lazy
+                    load
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Bundle analysis</div>
+                <div class="topic-desc">
+                  @next/bundle-analyzer, reducing JS size
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Bundle Analysis & Optimization</h3>
+              <pre><span class="cm"># Install analyzer</span>
+npm install @next/bundle-analyzer
+
+<span class="cm">// next.config.ts</span>
+<span class="kw">import</span> withBundleAnalyzer <span class="kw">from</span> <span class="str">"@next/bundle-analyzer"</span>;
+<span class="kw">export default</span> <span class="fn">withBundleAnalyzer</span>({
+  enabled: process.env.ANALYZE === <span class="str">"true"</span>,
+})({
+  <span class="cm">// your config</span>
+});
+
+<span class="cm"># Run analysis</span>
+ANALYZE=true npm run build</pre>
+              <p><strong>Common optimizations:</strong></p>
+              <pre><span class="cm">// 1. Import only what you need (tree-shaking)</span>
+<span class="kw">import</span> { format } <span class="kw">from</span> <span class="str">"date-fns"</span>;  <span class="cm">// ✓ specific import</span>
+<span class="kw">import</span> _ <span class="kw">from</span> <span class="str">"lodash"</span>;              <span class="cm">// ✗ imports everything</span>
+<span class="kw">import</span> groupBy <span class="kw">from</span> <span class="str">"lodash/groupBy"</span>; <span class="cm">// ✓ specific import</span>
+
+<span class="cm">// 2. Use Server Components — zero JS sent to client</span>
+<span class="cm">// 3. Dynamic import heavy components</span>
+<span class="cm">// 4. Replace heavy libs: moment → date-fns, lodash → native JS</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Run <code>ANALYZE=true npm run build</code> to visualize
+                    your bundle
+                  </li>
+                  <li>
+                    Server Components send zero JS — move code off the client
+                    where possible
+                  </li>
+                  <li>
+                    Use specific imports for tree-shaking:
+                    <code>import { x } from "lib"</code>
+                  </li>
+                  <li>
+                    Lazy load large components that aren't needed immediately
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">SEO best practices</div>
+                <div class="topic-desc">
+                  Sitemap, robots.txt, structured data, OG images
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>SEO Best Practices</h3>
+              <pre><span class="cm">// app/sitemap.ts — auto-generated sitemap</span>
+<span class="kw">import type</span> { <span class="tp">MetadataRoute</span> } <span class="kw">from</span> <span class="str">"next"</span>;
+
+<span class="kw">export default async function</span> <span class="fn">sitemap</span>(): <span class="tp">Promise</span>&lt;<span class="tp">MetadataRoute.Sitemap</span>&gt; {
+  <span class="kw">const</span> posts = <span class="kw">await</span> <span class="fn">getAllPosts</span>();
+  <span class="kw">return</span> [
+    { url: <span class="str">"https://myapp.com"</span>, lastModified: <span class="kw">new</span> <span class="fn">Date</span>() },
+    ...posts.<span class="fn">map</span>(post =&gt; ({
+      url: <span class="str">`https://myapp.com/blog/${post.slug}`</span>,
+      lastModified: post.updatedAt,
+    })),
+  ];
+}
+
+<span class="cm">// app/robots.ts</span>
+<span class="kw">export default function</span> <span class="fn">robots</span>(): <span class="tp">MetadataRoute.Robots</span> {
+  <span class="kw">return</span> {
+    rules: { userAgent: <span class="str">"*"</span>, allow: <span class="str">"/"</span>, disallow: <span class="str">"/api/"</span> },
+    sitemap: <span class="str">"https://myapp.com/sitemap.xml"</span>,
+  };
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>sitemap.ts</code> and <code>robots.ts</code> are
+                    auto-served at their standard URLs
+                  </li>
+                  <li>
+                    Use <code>generateMetadata()</code> for dynamic titles and
+                    Open Graph data
+                  </li>
+                  <li>
+                    Add JSON-LD structured data with
+                    <code>&lt;script type="application/ld+json"&gt;</code>
+                  </li>
+                  <li>
+                    Server-rendered pages are fully crawlable — great for SEO
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Internationalization</div>
+                <div class="topic-desc">
+                  i18n routing, translations, locale detection
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Internationalization (i18n)</h3>
+              <p>
+                In the App Router, i18n is implemented using route segments and
+                middleware for locale detection.
+              </p>
+              <pre><span class="cm">// Folder structure for i18n</span>
+app/
+├── [locale]/
+│   ├── layout.tsx
+│   ├── page.tsx       <span class="cm">← /en, /fr, /de</span>
+│   └── about/
+│       └── page.tsx   <span class="cm">← /en/about, /fr/about</span>
+
+<span class="cm">// middleware.ts — detect locale</span>
+<span class="kw">import</span> { match } <span class="kw">from</span> <span class="str">"@formatjs/intl-localematcher"</span>;
+<span class="kw">import</span> Negotiator <span class="kw">from</span> <span class="str">"negotiator"</span>;
+
+<span class="kw">const</span> locales = [<span class="str">"en"</span>, <span class="str">"fr"</span>, <span class="str">"de"</span>];
+
+<span class="kw">export function</span> <span class="fn">middleware</span>(request: <span class="tp">NextRequest</span>) {
+  <span class="kw">const</span> { pathname } = request.nextUrl;
+  <span class="kw">const</span> hasLocale = locales.<span class="fn">some</span>(l =&gt; pathname.<span class="fn">startsWith</span>(<span class="str">`/${l}`</span>));
+  <span class="kw">if</span> (hasLocale) <span class="kw">return</span>;
+
+  <span class="kw">const</span> locale = <span class="fn">getPreferredLocale</span>(request); <span class="cm">// detect from headers</span>
+  <span class="kw">return</span> NextResponse.<span class="fn">redirect</span>(
+    <span class="kw">new</span> <span class="fn">URL</span>(<span class="str">`/${locale}${pathname}`</span>, request.url)
+  );
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Use a <code>[locale]</code> dynamic segment as the root to
+                    handle multiple languages
+                  </li>
+                  <li>
+                    Middleware detects user locale from
+                    <code>Accept-Language</code> headers
+                  </li>
+                  <li>
+                    Popular libraries: <code>next-intl</code>,
+                    <code>i18next</code>,
+                    <code>react-i18next</code>
+                  </li>
+                  <li>
+                    Pages Router had built-in <code>i18n</code> config; App
+                    Router uses the middleware pattern
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Testing</div>
+                <div class="topic-desc">
+                  Vitest, Playwright, Testing Library, mocks
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Testing Next.js Apps</h3>
+              <pre><span class="cm">// Unit tests with Vitest + Testing Library</span>
+<span class="cm">// npm install -D vitest @testing-library/react @vitejs/plugin-react jsdom</span>
+
+<span class="cm">// __tests__/Button.test.tsx</span>
+<span class="kw">import</span> { render, screen, fireEvent } <span class="kw">from</span> <span class="str">"@testing-library/react"</span>;
+<span class="kw">import</span> { <span class="tp">Button</span> } <span class="kw">from</span> <span class="str">"@/components/Button"</span>;
+
+<span class="fn">test</span>(<span class="str">"handles click"</span>, () =&gt; {
+  <span class="kw">const</span> onClick = vi.<span class="fn">fn</span>();
+  <span class="fn">render</span>(&lt;<span class="tp">Button</span> onClick={onClick}&gt;Click&lt;/<span class="tp">Button</span>&gt;);
+  fireEvent.<span class="fn">click</span>(screen.<span class="fn">getByText</span>(<span class="str">"Click"</span>));
+  <span class="fn">expect</span>(onClick).<span class="fn">toHaveBeenCalled</span>();
+});
+
+<span class="cm">// E2E tests with Playwright</span>
+<span class="cm">// npm install -D @playwright/test</span>
+
+<span class="cm">// e2e/home.spec.ts</span>
+<span class="kw">import</span> { test, expect } <span class="kw">from</span> <span class="str">"@playwright/test"</span>;
+
+<span class="fn">test</span>(<span class="str">"homepage loads"</span>, <span class="kw">async</span> ({ page }) =&gt; {
+  <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">"/"</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">getByRole</span>(<span class="str">"heading"</span>)).<span class="fn">toContainText</span>(<span class="str">"Welcome"</span>);
+});</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Vitest + Testing Library for unit/component tests (fast,
+                    modern)
+                  </li>
+                  <li>
+                    Playwright for E2E tests (real browser, full user flow)
+                  </li>
+                  <li>
+                    Mock Server Components and Server Actions in unit tests
+                  </li>
+                  <li>
+                    Next.js has official docs for Vitest and Playwright setup
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Core Web Vitals</div>
+                <div class="topic-desc">
+                  LCP, FID, CLS, performance monitoring
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Core Web Vitals</h3>
+              <p>
+                Next.js is built to optimize the three Core Web Vitals that
+                Google uses for search ranking:
+              </p>
+              <pre><span class="cm">// LCP (Largest Contentful Paint) — load speed</span>
+<span class="cm">// ✓ Use priority on hero images: &lt;Image priority /&gt;</span>
+<span class="cm">// ✓ Server-render above-the-fold content</span>
+<span class="cm">// ✓ Preload fonts with next/font</span>
+
+<span class="cm">// INP (Interaction to Next Paint) — responsiveness</span>
+<span class="cm">// ✓ Keep Client Components small</span>
+<span class="cm">// ✓ Use useTransition for non-urgent updates</span>
+<span class="cm">// ✓ Lazy load heavy interactive components</span>
+
+<span class="cm">// CLS (Cumulative Layout Shift) — visual stability</span>
+<span class="cm">// ✓ Always set width/height on images</span>
+<span class="cm">// ✓ Use next/font (auto size-adjust)</span>
+<span class="cm">// ✓ Reserve space for dynamic content</span>
+
+<span class="cm">// Measure in your app:</span>
+<span class="kw">export function</span> <span class="fn">reportWebVitals</span>(metric) {
+  console.<span class="fn">log</span>(metric); <span class="cm">// { name: "LCP", value: 1234, ... }</span>
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    LCP: optimize largest visible element load time (images,
+                    text)
+                  </li>
+                  <li>
+                    INP (replaced FID): how fast the page responds to
+                    interactions
+                  </li>
+                  <li>
+                    CLS: prevent layout shifts with sized images and stable
+                    fonts
+                  </li>
+                  <li>
+                    Next.js Image, Font, and Server Components help all three by
+                    default
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════ -->
+      <!-- PHASE 8: DEPLOYMENT & DEVOPS                       -->
+      <!-- ═══════════════════════════════════════════════════ -->
+      <div class="phase">
+        <div class="phase-header" style="background: #ede7f6">
+          <div class="phase-num" style="background: #5b21b6; color: #fff">
+            8
+          </div>
+          <div class="phase-title" style="color: #3b0764">
+            Deployment & DevOps
+          </div>
+          <div class="phase-tag" style="background: #c4b5fd; color: #3b0764">
+            Week 9
+          </div>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            style="width: 100%; background: #5b21b6"
+          ></div>
+        </div>
+        <div class="phase-body">
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Vercel deployment</div>
+                <div class="topic-desc">
+                  Git integration, preview deployments, analytics
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Deploying to Vercel</h3>
+              <p>
+                Vercel is built by the Next.js team — it's the easiest and most
+                optimized way to deploy. Push to Git and it deploys
+                automatically.
+              </p>
+              <pre><span class="cm"># 1. Push your code to GitHub/GitLab/Bitbucket</span>
+<span class="cm"># 2. Go to vercel.com → Import Project</span>
+<span class="cm"># 3. Select your repo → Deploy</span>
+
+<span class="cm"># Or use the CLI:</span>
+npm i -g vercel
+vercel          <span class="cm"># deploy preview</span>
+vercel --prod   <span class="cm"># deploy to production</span>
+
+<span class="cm"># Every git push:</span>
+<span class="cm"># - main/master branch → production deployment</span>
+<span class="cm"># - other branches → preview deployment (unique URL)</span>
+<span class="cm"># - Pull requests → automatic preview + comment with URL</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Zero-config deployment — Vercel auto-detects Next.js and
+                    optimizes
+                  </li>
+                  <li>
+                    Every PR gets a preview deployment with a shareable URL
+                  </li>
+                  <li>Built-in analytics, speed insights, and Edge network</li>
+                  <li>
+                    Environment variables configured in the Vercel dashboard
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Self-hosting</div>
+                <div class="topic-desc">
+                  Docker, Node.js server, standalone output
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Self-Hosting Next.js</h3>
+              <pre><span class="cm">// next.config.ts — enable standalone output</span>
+<span class="kw">const</span> nextConfig = {
+  output: <span class="str">"standalone"</span>, <span class="cm">// minimal production bundle</span>
+};
+
+<span class="cm"># Build and run</span>
+npm run build
+node .next/standalone/server.js  <span class="cm"># starts on port 3000</span></pre>
+              <p><strong>Docker deployment:</strong></p>
+              <pre><span class="cm"># Dockerfile</span>
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+EXPOSE 3000
+CMD ["node", "server.js"]</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>output: "standalone"</code> creates a minimal,
+                    self-contained build
+                  </li>
+                  <li>
+                    Docker multi-stage builds keep the image small (~100MB)
+                  </li>
+                  <li>
+                    Copy <code>.next/static</code> and
+                    <code>public/</code> alongside the standalone server
+                  </li>
+                  <li>
+                    Works on any cloud: AWS, GCP, Azure, DigitalOcean, Railway
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Static export</div>
+                <div class="topic-desc">
+                  output: "export", static HTML, CDN hosting
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Static Export</h3>
+              <p>
+                If you don't need server features, export your Next.js app as
+                static HTML files.
+              </p>
+              <pre><span class="cm">// next.config.ts</span>
+<span class="kw">const</span> nextConfig = {
+  output: <span class="str">"export"</span>, <span class="cm">// generates static HTML in /out</span>
+};
+
+<span class="cm"># Build static files</span>
+npm run build
+<span class="cm"># Output: /out directory with HTML, CSS, JS</span>
+<span class="cm"># Deploy to any static host: Netlify, S3, GitHub Pages</span>
+
+<span class="cm">// Limitations of static export:</span>
+<span class="cm">// ✗ No Server Components (async)</span>
+<span class="cm">// ✗ No Server Actions</span>
+<span class="cm">// ✗ No Route Handlers with dynamic data</span>
+<span class="cm">// ✗ No Middleware</span>
+<span class="cm">// ✗ No ISR / revalidation</span>
+<span class="cm">// ✓ Client Components work fine</span>
+<span class="cm">// ✓ Static data fetching at build time works</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>output: "export"</code> generates pure static HTML in
+                    the <code>/out</code> directory
+                  </li>
+                  <li>
+                    Deploy to any CDN or static host — no Node.js server needed
+                  </li>
+                  <li>No server features available — client-only rendering</li>
+                  <li>Good for documentation sites, landing pages, blogs</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">CI/CD pipelines</div>
+                <div class="topic-desc">
+                  GitHub Actions, automated testing, preview deploys
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>CI/CD with GitHub Actions</h3>
+              <pre><span class="cm"># .github/workflows/ci.yml</span>
+name: CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - run: npx vitest run
+      - run: npx playwright test</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>Run lint → build → test on every push and PR</li>
+                  <li>
+                    Vercel auto-deploys from Git — CI focuses on quality checks
+                  </li>
+                  <li>
+                    Cache <code>node_modules</code> and
+                    <code>.next/cache</code> for faster builds
+                  </li>
+                  <li>
+                    Use Playwright for E2E tests against preview deployments
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Monitoring & analytics</div>
+                <div class="topic-desc">Vercel Analytics, Sentry, logging</div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Monitoring & Analytics</h3>
+              <pre><span class="cm">// Vercel Analytics — add to root layout</span>
+<span class="kw">import</span> { <span class="tp">Analytics</span> } <span class="kw">from</span> <span class="str">"@vercel/analytics/react"</span>;
+<span class="kw">import</span> { <span class="tp">SpeedInsights</span> } <span class="kw">from</span> <span class="str">"@vercel/speed-insights/next"</span>;
+
+<span class="kw">export default function</span> <span class="fn">RootLayout</span>({ children }) {
+  <span class="kw">return</span> (
+    &lt;html&gt;
+      &lt;body&gt;
+        {children}
+        &lt;<span class="tp">Analytics</span> /&gt;
+        &lt;<span class="tp">SpeedInsights</span> /&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  );
+}
+
+<span class="cm">// Error tracking with Sentry</span>
+<span class="cm">// npx @sentry/wizard@latest -i nextjs</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Vercel Analytics: page views, Web Vitals, audience insights
+                    (free tier)
+                  </li>
+                  <li>Speed Insights: real-user performance data per route</li>
+                  <li>
+                    Sentry: error tracking, performance monitoring, session
+                    replay
+                  </li>
+                  <li>
+                    Use <code>instrumentation.ts</code> for server-side
+                    monitoring setup
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Security best practices</div>
+                <div class="topic-desc">Headers, CSP, CORS, rate limiting</div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Security Best Practices</h3>
+              <pre><span class="cm">// next.config.ts — security headers</span>
+<span class="kw">const</span> nextConfig = {
+  <span class="kw">async</span> <span class="fn">headers</span>() {
+    <span class="kw">return</span> [{
+      source: <span class="str">"/(.*)"</span>,
+      headers: [
+        { key: <span class="str">"X-Frame-Options"</span>, value: <span class="str">"DENY"</span> },
+        { key: <span class="str">"X-Content-Type-Options"</span>, value: <span class="str">"nosniff"</span> },
+        { key: <span class="str">"Referrer-Policy"</span>, value: <span class="str">"strict-origin-when-cross-origin"</span> },
+        { key: <span class="str">"Strict-Transport-Security"</span>, value: <span class="str">"max-age=63072000"</span> },
+      ],
+    }];
+  },
+};</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Set security headers in <code>next.config.ts</code> — they
+                    apply to all routes
+                  </li>
+                  <li>
+                    Server Components don't expose secrets — but validate all
+                    Server Action inputs
+                  </li>
+                  <li>
+                    Use <code>NEXT_PUBLIC_</code> carefully — anything with that
+                    prefix is in the browser
+                  </li>
+                  <li>
+                    Implement rate limiting in middleware or route handlers for
+                    API protection
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════ -->
+      <!-- PHASE 9: VERSION EVOLUTION                         -->
+      <!-- ═══════════════════════════════════════════════════ -->
+      <div class="phase">
+        <div class="phase-header" style="background: #e8f5e9">
+          <div class="phase-num" style="background: #2e7d32; color: #fff">
+            9
+          </div>
+          <div class="phase-title" style="color: #1b5e20">
+            Version Evolution & What's New
+          </div>
+          <div class="phase-tag" style="background: #a5d6a7; color: #1b5e20">
+            Week 10
+          </div>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            style="width: 100%; background: #2e7d32"
+          ></div>
+        </div>
+        <div class="phase-body">
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Pages Router vs App Router</div>
+                <div class="topic-desc">
+                  The fundamental architectural shift
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Pages Router vs App Router</h3>
+              <p>
+                The biggest change in Next.js history. The
+                <strong>Pages Router</strong> (pre-13) and
+                <strong>App Router</strong> (13+) are fundamentally different
+                architectures.
+              </p>
+              <pre><span class="cm">// ═══ PAGES ROUTER (legacy) ═══</span>
+<span class="cm">// pages/index.tsx → /</span>
+<span class="cm">// pages/about.tsx → /about</span>
+<span class="cm">// pages/api/users.ts → /api/users</span>
+
+<span class="cm">// Data fetching: special exported functions</span>
+<span class="kw">export async function</span> <span class="fn">getServerSideProps</span>() {    <span class="cm">// SSR</span>
+  <span class="kw">return</span> { props: { data: <span class="kw">await</span> <span class="fn">fetchData</span>() } };
+}
+<span class="kw">export async function</span> <span class="fn">getStaticProps</span>() {          <span class="cm">// SSG</span>
+  <span class="kw">return</span> { props: { data: <span class="kw">await</span> <span class="fn">fetchData</span>() }, revalidate: <span class="num">60</span> };
+}
+
+<span class="cm">// ═══ APP ROUTER (modern) ═══</span>
+<span class="cm">// app/page.tsx → /</span>
+<span class="cm">// app/about/page.tsx → /about</span>
+<span class="cm">// app/api/users/route.ts → /api/users</span>
+
+<span class="cm">// Data fetching: just async/await in the component</span>
+<span class="kw">export default async function</span> <span class="fn">Page</span>() {
+  <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetchData</span>(); <span class="cm">// direct!</span>
+  <span class="kw">return</span> &lt;div&gt;{data}&lt;/div&gt;;
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Pages Router: <code>pages/</code> directory,
+                    <code>getServerSideProps</code>/<code>getStaticProps</code>
+                  </li>
+                  <li>
+                    App Router: <code>app/</code> directory, Server Components,
+                    <code>async</code> components
+                  </li>
+                  <li>
+                    App Router adds: layouts, loading/error UI, streaming,
+                    Server Actions
+                  </li>
+                  <li>Both can coexist — migrate incrementally</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Next.js 12 → 13</div>
+                <div class="topic-desc">
+                  App Router, RSC, Turbopack introduction
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Next.js 12 → 13: The App Router Revolution</h3>
+              <p>
+                Next.js 13 (Oct 2022) was the biggest update ever — introducing
+                the App Router, React Server Components, and Turbopack.
+              </p>
+              <pre><span class="cm">// Major changes in Next.js 13:</span>
+
+<span class="cm">// 1. App Router (beta) — new app/ directory</span>
+<span class="cm">//    - React Server Components by default</span>
+<span class="cm">//    - Nested layouts with layout.tsx</span>
+<span class="cm">//    - loading.tsx, error.tsx, not-found.tsx</span>
+<span class="cm">//    - Route groups (folder)</span>
+
+<span class="cm">// 2. Turbopack (alpha) — Rust-based bundler</span>
+<span class="cm">//    - 700x faster than webpack (updates)</span>
+<span class="cm">//    - next dev --turbo</span>
+
+<span class="cm">// 3. next/image improvements</span>
+<span class="cm">//    - Less client-side JS</span>
+<span class="cm">//    - Native lazy loading</span>
+<span class="cm">//    - Required alt text (accessibility)</span>
+
+<span class="cm">// 4. next/font — zero-layout-shift font loading</span>
+<span class="cm">//    - Self-hosted Google Fonts</span>
+<span class="cm">//    - Automatic font optimization</span>
+
+<span class="cm">// 5. next/link — no more nested &lt;a&gt; tag needed</span>
+<span class="cm">//    Before: &lt;Link href="/"&gt;&lt;a&gt;Home&lt;/a&gt;&lt;/Link&gt;</span>
+<span class="cm">//    After:  &lt;Link href="/"&gt;Home&lt;/Link&gt;</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    App Router introduced — the biggest architectural change in
+                    Next.js
+                  </li>
+                  <li>Server Components became the default rendering model</li>
+                  <li>Turbopack announced as webpack replacement (alpha)</li>
+                  <li>
+                    <code>&lt;Link&gt;</code> simplified — no more nested
+                    <code>&lt;a&gt;</code> tag needed
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Next.js 13 → 14</div>
+                <div class="topic-desc">
+                  Server Actions stable, Turbopack improvements
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Next.js 13 → 14: Server Actions Go Stable</h3>
+              <p>
+                Next.js 14 (Oct 2023) stabilized key features and focused on
+                developer experience.
+              </p>
+              <pre><span class="cm">// Major changes in Next.js 14:</span>
+
+<span class="cm">// 1. Server Actions — STABLE</span>
+<span class="cm">//    - No more experimental flag needed</span>
+<span class="cm">//    - "use server" directive works out of the box</span>
+<span class="cm">//    - Progressive enhancement (works without JS)</span>
+
+<span class="cm">// 2. Turbopack improvements</span>
+<span class="cm">//    - 53% faster local server startup</span>
+<span class="cm">//    - 94% faster code updates (Fast Refresh)</span>
+
+<span class="cm">// 3. Partial Prerendering (PPR) — PREVIEW</span>
+<span class="cm">//    - Static shell + dynamic streaming in one route</span>
+<span class="cm">//    - Best of SSG + SSR combined</span>
+
+<span class="cm">// 4. Metadata improvements</span>
+<span class="cm">//    - viewport and generateViewport separated from metadata</span>
+
+<span class="cm">// 5. fetch() cached by default</span>
+<span class="cm">//    - GET requests automatically cached</span>
+<span class="cm">//    - This was REVERSED in Next.js 15!</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Server Actions went from experimental to stable — the big
+                    headline
+                  </li>
+                  <li>
+                    Turbopack got significantly faster but was still dev-only
+                  </li>
+                  <li>
+                    PPR introduced as a preview — combining static and dynamic
+                    rendering
+                  </li>
+                  <li>
+                    Fetch caching was aggressive by default — this caused
+                    confusion and was changed in v15
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Next.js 14 → 15</div>
+                <div class="topic-desc">
+                  React 19, async APIs, caching changes
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Next.js 14 → 15: Breaking Changes & React 19</h3>
+              <p>
+                Next.js 15 (Oct 2024) brought significant breaking changes,
+                aligning with React 19.
+              </p>
+              <pre><span class="cm">// Major BREAKING changes in Next.js 15:</span>
+
+<span class="cm">// 1. Async APIs — params, searchParams, cookies, headers</span>
+<span class="cm">//    Before (v14): const { id } = params;</span>
+<span class="cm">//    After (v15):  const { id } = await params;</span>
+
+<span class="cm">// 2. Caching defaults REVERSED</span>
+<span class="cm">//    Before (v14): fetch() cached by default (force-cache)</span>
+<span class="cm">//    After (v15):  fetch() NOT cached by default (no-store)</span>
+<span class="cm">//    Before (v14): GET route handlers cached by default</span>
+<span class="cm">//    After (v15):  GET route handlers NOT cached by default</span>
+
+<span class="cm">// 3. React 19 support</span>
+<span class="cm">//    - useActionState replaces useFormState</span>
+<span class="cm">//    - useOptimistic for optimistic UI</span>
+<span class="cm">//    - use() hook for reading promises/context</span>
+<span class="cm">//    - ref as prop (no more forwardRef needed)</span>
+
+<span class="cm">// 4. Turbopack stable for dev</span>
+<span class="cm">//    - next dev --turbopack (default in new projects)</span>
+
+<span class="cm">// 5. next.config.ts support (TypeScript config)</span>
+
+<span class="cm">// 6. ESLint 9 support</span>
+
+<span class="cm">// 7. Instrumentation API stable</span>
+<span class="cm">//    - instrumentation.ts for monitoring setup</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>params</code>, <code>searchParams</code>,
+                    <code>cookies()</code>, <code>headers()</code> are all async
+                    now — must <code>await</code>
+                  </li>
+                  <li>
+                    Caching is opt-in, not opt-out — the #1 complaint from v14
+                    was addressed
+                  </li>
+                  <li>
+                    React 19: <code>useActionState</code>,
+                    <code>useOptimistic</code>, <code>use()</code> hook, ref as
+                    prop
+                  </li>
+                  <li>
+                    Turbopack is stable for development — significantly faster
+                    than webpack
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Next.js 15 → 16</div>
+                <div class="topic-desc">
+                  Turbopack builds, new features, React improvements
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Next.js 16: What's New</h3>
+              <p>
+                Next.js 16 focuses on
+                <strong>production-ready Turbopack</strong>, improved rendering,
+                and developer experience.
+              </p>
+              <pre><span class="cm">// Key features in Next.js 16:</span>
+
+<span class="cm">// 1. Turbopack for builds — STABLE</span>
+<span class="cm">//    - next build --turbopack now production-ready</span>
+<span class="cm">//    - Up to 80% faster builds than webpack</span>
+<span class="cm">//    - Full parity with webpack features</span>
+
+<span class="cm">// 2. Partial Prerendering (PPR) — more mature</span>
+<span class="cm">//    - Static shell served from CDN instantly</span>
+<span class="cm">//    - Dynamic parts stream via Suspense boundaries</span>
+<span class="cm">//    - Incremental adoption per-route</span>
+
+<span class="cm">// 3. Improved dev overlay &amp; error reporting</span>
+<span class="cm">//    - Better error messages with source mapping</span>
+<span class="cm">//    - Redesigned error overlay UI</span>
+
+<span class="cm">// 4. Enhanced caching controls</span>
+<span class="cm">//    - 'use cache' directive for granular caching</span>
+<span class="cm">//    - cacheLife() and cacheTag() APIs</span>
+<span class="cm">//    - More intuitive cache invalidation</span>
+
+<span class="cm">// 5. React Compiler support</span>
+<span class="cm">//    - Auto-memoization (no manual useMemo/useCallback)</span>
+<span class="cm">//    - Experimental but increasingly stable</span>
+
+<span class="cm">// 6. Improved Middleware</span>
+<span class="cm">//    - Faster execution</span>
+<span class="cm">//    - Better Node.js API compatibility</span></pre>
+              <div class="version-note">
+                <strong>Migration tip:</strong> Next.js 16 has fewer breaking
+                changes than 15. The main upgrade path is enabling Turbopack for
+                builds and adopting the new caching APIs. Run
+                <code>npx @next/codemod@latest upgrade</code> for automated
+                migration.
+              </div>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Turbopack is now stable for both <code>dev</code> and
+                    <code>build</code> — webpack era is ending
+                  </li>
+                  <li>
+                    PPR is maturing — the future default rendering strategy for
+                    Next.js
+                  </li>
+                  <li>
+                    <code>'use cache'</code> directive offers intuitive,
+                    granular caching control
+                  </li>
+                  <li>
+                    React Compiler auto-memoizes — reducing boilerplate code
+                  </li>
+                  <li>
+                    Use the codemod tool for automated upgrades between versions
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Migration guide</div>
+                <div class="topic-desc">
+                  Step-by-step upgrade path, codemods
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Migration Guide</h3>
+              <p>
+                Next.js provides automated codemods to help upgrade between
+                major versions.
+              </p>
+              <pre><span class="cm"># Automated upgrade (handles most changes)</span>
+npx @next/codemod@latest upgrade
+
+<span class="cm"># This will:</span>
+<span class="cm"># 1. Update next, react, react-dom to latest</span>
+<span class="cm"># 2. Run relevant codemods for breaking changes</span>
+<span class="cm"># 3. Show manual steps needed</span>
+
+<span class="cm"># Common migration steps (v14 → v15):</span>
+<span class="cm"># 1. Update packages</span>
+npm install next@latest react@latest react-dom@latest
+
+<span class="cm"># 2. Fix async APIs — params, searchParams are now Promises</span>
+<span class="cm"># Before: const { id } = params;</span>
+<span class="cm"># After:  const { id } = await params;</span>
+
+<span class="cm"># 3. Review caching — fetch no longer cached by default</span>
+<span class="cm"># Add { cache: "force-cache" } where needed</span>
+
+<span class="cm"># 4. Replace useFormState with useActionState</span>
+<span class="cm"># Import from "react" instead of "react-dom"</span>
+
+<span class="cm"># 5. Pages Router → App Router migration</span>
+<span class="cm"># - Move pages/ files to app/ one at a time</span>
+<span class="cm"># - Replace getServerSideProps with async components</span>
+<span class="cm"># - Replace getStaticProps with cached fetch</span>
+<span class="cm"># - Both routers can coexist during migration</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Always use <code>npx @next/codemod@latest upgrade</code> —
+                    it automates most changes
+                  </li>
+                  <li>
+                    Pages Router → App Router: migrate one page at a time, both
+                    coexist
+                  </li>
+                  <li>
+                    Test thoroughly after upgrading — especially caching
+                    behavior
+                  </li>
+                  <li>
+                    Read the official upgrade guide for each version's specific
+                    changes
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        if (!Element.prototype.matches) {
+          Element.prototype.matches =
+            Element.prototype.msMatchesSelector ||
+            Element.prototype.webkitMatchesSelector;
+        }
+        if (!Element.prototype.closest) {
+          Element.prototype.closest = function (s) {
+            var el = this;
+            do {
+              if (el.matches(s)) return el;
+              el = el.parentElement || el.parentNode;
+            } while (el !== null && el.nodeType === 1);
+            return null;
+          };
+        }
+
+        function handleClick(e) {
+          var target = e.target;
+
+          var phaseHeader = target.closest
+            ? target.closest(".phase-header")
+            : null;
+          if (phaseHeader) {
+            var body = phaseHeader.nextElementSibling;
+            while (body && !body.classList.contains("phase-body")) {
+              body = body.nextElementSibling;
+            }
+            var chevron = phaseHeader.querySelector(".chevron");
+            if (body) body.classList.toggle("collapsed");
+            if (chevron) chevron.classList.toggle("open");
+            return;
+          }
+
+          if (target.closest && target.closest(".topic-content")) return;
+
+          var topic = target.closest ? target.closest(".topic") : null;
+          if (topic) {
+            var wasActive = topic.classList.contains("active");
+            var phase = topic.closest(".phase-body");
+            if (phase) {
+              var activeTopics = phase.querySelectorAll(".topic.active");
+              for (var i = 0; i < activeTopics.length; i++) {
+                activeTopics[i].classList.remove("active");
+              }
+            }
+            if (!wasActive) {
+              topic.classList.add("active");
+              setTimeout(function () {
+                topic.scrollIntoView({ behavior: "smooth", block: "nearest" });
+              }, 50);
+            }
+          }
+        }
+
+        document.addEventListener("click", handleClick, false);
+        document.addEventListener("touchend", function (e) {
+          if (
+            e.target.closest &&
+            (e.target.closest(".phase-header") || e.target.closest(".topic"))
+          ) {
+            e.preventDefault();
+            handleClick(e);
+          }
+        }, false);
+
+        var themeToggle = document.getElementById("themeToggle");
+        if (themeToggle) {
+          themeToggle.addEventListener("change", function () {
+            var isDark = themeToggle.checked;
+            var roadmap = document.getElementById("roadmap");
+            if (isDark) {
+              roadmap.classList.add("dark");
+              document.body.classList.remove("light-mode");
+            } else {
+              roadmap.classList.remove("dark");
+              document.body.classList.add("light-mode");
+            }
+            try {
+              localStorage.setItem("nextjs-course-theme", isDark ? "dark" : "light");
+            } catch (ex) {}
+          }, false);
+        }
+
+        try {
+          var saved = localStorage.getItem("nextjs-course-theme");
+          if (saved === "light") {
+            document.getElementById("roadmap").classList.remove("dark");
+            if (themeToggle) themeToggle.checked = false;
+            document.body.classList.add("light-mode");
+          }
+        } catch (ex) {}
+      })();
+    </script>
+  </body>
+</html>
