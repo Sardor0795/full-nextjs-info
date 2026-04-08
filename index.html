@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Next.js Roadmap</title>
+    <title>Next.js Full Course</title>
     <style>
       html,
       body {
@@ -1746,6 +1746,201 @@ app/
           <div class="topic">
             <div class="topic-header">
               <div>
+                <div class="topic-name">Composition patterns</div>
+                <div class="topic-desc">
+                  Server + Client boundaries, children pattern, interleaving
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Server & Client Composition Patterns</h3>
+              <p>
+                The key to a well-architected Next.js app is knowing
+                <strong>where to draw the client boundary</strong>. Server
+                Components can render Client Components, but Client Components
+                cannot import Server Components directly. However, you can
+                <strong>pass Server Components as children</strong> to Client
+                Components.
+              </p>
+              <pre><span class="cm">// ✗ WRONG — importing a Server Component inside a Client Component</span>
+<span class="str">"use client"</span>;
+<span class="kw">import</span> <span class="fn">ServerComponent</span> <span class="kw">from</span> <span class="str">"./ServerComponent"</span>; <span class="cm">// becomes client!</span>
+
+<span class="kw">export function</span> <span class="fn">ClientWrapper</span>() {
+  <span class="kw">return</span> &lt;<span class="fn">ServerComponent</span> /&gt;; <span class="cm">// ✗ this is now a client component</span>
+}
+
+<span class="cm">// ✓ CORRECT — pass Server Component as children (the "donut" pattern)</span>
+<span class="str">"use client"</span>;
+<span class="kw">export function</span> <span class="fn">ClientWrapper</span>({ children }: { children: <span class="tp">React.ReactNode</span> }) {
+  <span class="kw">const</span> [open, setOpen] = <span class="fn">useState</span>(<span class="kw">false</span>);
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;button onClick={() =&gt; <span class="fn">setOpen</span>(!open)}&gt;Toggle&lt;/button&gt;
+      {open &amp;&amp; children}  <span class="cm">{/* Server Component stays on server! */}</span>
+    &lt;/div&gt;
+  );
+}
+
+<span class="cm">// app/page.tsx — Server Component composes both</span>
+<span class="kw">export default function</span> <span class="fn">Page</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="fn">ClientWrapper</span>&gt;
+      &lt;<span class="fn">ServerComponent</span> /&gt;  <span class="cm">{/* rendered on the server */}</span>
+    &lt;/<span class="fn">ClientWrapper</span>&gt;
+  );
+}</pre>
+              <p><strong>Common composition patterns:</strong></p>
+              <pre><span class="cm">// Pattern 1: Provider wrapper (context at the root)</span>
+<span class="cm">// app/layout.tsx</span>
+<span class="kw">export default function</span> <span class="fn">RootLayout</span>({ children }) {
+  <span class="kw">return</span> (
+    &lt;html&gt;
+      &lt;body&gt;
+        &lt;<span class="fn">ThemeProvider</span>&gt;     <span class="cm">{/* Client Component */}</span>
+          &lt;<span class="fn">AuthProvider</span>&gt;     <span class="cm">{/* Client Component */}</span>
+            {children}          <span class="cm">{/* Server Components! */}</span>
+          &lt;/<span class="fn">AuthProvider</span>&gt;
+        &lt;/<span class="fn">ThemeProvider</span>&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  );
+}
+
+<span class="cm">// Pattern 2: Interactive island in a static page</span>
+<span class="kw">export default async function</span> <span class="fn">ProductPage</span>({ params }) {
+  <span class="kw">const</span> { id } = <span class="kw">await</span> params;
+  <span class="kw">const</span> product = <span class="kw">await</span> <span class="fn">getProduct</span>(id); <span class="cm">// server fetch</span>
+  <span class="kw">return</span> (
+    &lt;article&gt;
+      &lt;h1&gt;{product.name}&lt;/h1&gt;           <span class="cm">{/* static */}</span>
+      &lt;p&gt;{product.description}&lt;/p&gt;       <span class="cm">{/* static */}</span>
+      &lt;<span class="fn">AddToCartButton</span>                 <span class="cm">{/* interactive island */}</span>
+        id={product.id}
+        price={product.price}
+      /&gt;
+      &lt;<span class="fn">ReviewList</span> reviews={product.reviews} /&gt; <span class="cm">{/* static */}</span>
+    &lt;/article&gt;
+  );
+}
+
+<span class="cm">// Pattern 3: Fetch in server, interact in client</span>
+<span class="kw">export default async function</span> <span class="fn">DashboardPage</span>() {
+  <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">getChartData</span>();      <span class="cm">// server fetch</span>
+  <span class="kw">return</span> &lt;<span class="fn">InteractiveChart</span> data={data} /&gt;; <span class="cm">// client renders</span>
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Client Components can't <em>import</em> Server Components —
+                    but can receive them as <code>children</code>
+                  </li>
+                  <li>
+                    The "donut pattern": Client wrapper with Server content
+                    passed through <code>children</code>
+                  </li>
+                  <li>
+                    Keep Client Components as small "islands" of interactivity
+                    inside server-rendered pages
+                  </li>
+                  <li>
+                    Props flowing from Server → Client must be serializable
+                    (JSON-safe: no functions, Dates, Maps)
+                  </li>
+                  <li>
+                    Context providers are Client Components — wrap them at the
+                    layout level, pass pages as <code>children</code>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">server-only & client-only</div>
+                <div class="topic-desc">
+                  Preventing accidental code leaks across boundaries
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>server-only & client-only Packages</h3>
+              <p>
+                These packages provide <strong>build-time guards</strong> that
+                throw an error if server code is accidentally imported into a
+                Client Component, or vice versa. This prevents leaking secrets
+                or shipping server-heavy code to the browser.
+              </p>
+              <pre><span class="cm"># Install the guard packages</span>
+npm install server-only client-only</pre>
+              <pre><span class="cm">// lib/db.ts — mark as server-only</span>
+<span class="kw">import</span> <span class="str">"server-only"</span>;
+
+<span class="kw">export async function</span> <span class="fn">getUsers</span>() {
+  <span class="cm">// This uses DATABASE_URL — a secret</span>
+  <span class="kw">return</span> db.user.<span class="fn">findMany</span>();
+}
+
+<span class="cm">// If a Client Component tries to import this file:</span>
+<span class="cm">// ✗ BUILD ERROR: "server-only" module was imported from a Client Component</span>
+<span class="cm">// This catches the mistake at build time, not in production!</span></pre>
+              <pre><span class="cm">// hooks/useLocalStorage.ts — mark as client-only</span>
+<span class="kw">import</span> <span class="str">"client-only"</span>;
+
+<span class="kw">export function</span> <span class="fn">useLocalStorage</span>(key: <span class="tp">string</span>) {
+  <span class="cm">// Uses window.localStorage — browser API</span>
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>(() =&gt;
+    localStorage.<span class="fn">getItem</span>(key)
+  );
+  <span class="cm">// ...</span>
+}</pre>
+              <p><strong>The "taint" API</strong> for extra protection:</p>
+              <pre><span class="cm">// Prevent specific objects from being passed to Client Components</span>
+<span class="kw">import</span> { experimental_taintObjectReference } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="kw">export async function</span> <span class="fn">getUser</span>(id: <span class="tp">string</span>) {
+  <span class="kw">const</span> user = <span class="kw">await</span> db.user.<span class="fn">findUnique</span>({ where: { id } });
+  <span class="fn">experimental_taintObjectReference</span>(
+    <span class="str">"Do not pass user object to client"</span>,
+    user
+  );
+  <span class="kw">return</span> user;
+}
+<span class="cm">// Now if you accidentally pass `user` as a prop to a</span>
+<span class="cm">// Client Component, React throws an error at runtime.</span>
+<span class="cm">// Instead, pick only the safe fields to pass down.</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>import "server-only"</code> at the top of files that
+                    should never run in the browser
+                  </li>
+                  <li>
+                    <code>import "client-only"</code> for files that need
+                    browser APIs (localStorage, window)
+                  </li>
+                  <li>
+                    These are build-time checks — they catch mistakes before
+                    they reach production
+                  </li>
+                  <li>
+                    Use for: database queries, API key usage, auth utilities,
+                    and any file with secrets
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
                 <div class="topic-name">Data fetching patterns</div>
                 <div class="topic-desc">
                   fetch, async components, parallel fetching
@@ -2032,6 +2227,103 @@ app/
               </div>
             </div>
           </div>
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">The use() hook</div>
+                <div class="topic-desc">
+                  Reading promises & context in Client Components (React 19)
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>The <code>use()</code> Hook (React 19)</h3>
+              <p>
+                React 19 introduced <code>use()</code> — a new hook that can
+                <strong>read promises</strong> and
+                <strong>read context</strong> inside Client Components. Unlike
+                other hooks, <code>use()</code> can be called inside
+                conditionals and loops.
+              </p>
+              <pre><span class="cm">// Reading a Promise — unwrap data from the server</span>
+<span class="str">"use client"</span>;
+<span class="kw">import</span> { use } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="kw">export function</span> <span class="fn">UserProfile</span>({ userPromise }: {
+  userPromise: <span class="tp">Promise</span>&lt;<span class="tp">User</span>&gt;;
+}) {
+  <span class="cm">// use() suspends until the promise resolves</span>
+  <span class="kw">const</span> user = <span class="fn">use</span>(userPromise);
+  <span class="kw">return</span> &lt;h1&gt;{user.name}&lt;/h1&gt;;
+}
+
+<span class="cm">// Server Component passes the promise down</span>
+<span class="cm">// app/profile/page.tsx</span>
+<span class="kw">import</span> { <span class="tp">Suspense</span> } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="kw">export default function</span> <span class="fn">ProfilePage</span>() {
+  <span class="cm">// Start fetching immediately — don't await!</span>
+  <span class="kw">const</span> userPromise = <span class="fn">getUser</span>();
+
+  <span class="kw">return</span> (
+    &lt;<span class="tp">Suspense</span> fallback={&lt;p&gt;Loading profile...&lt;/p&gt;}&gt;
+      &lt;<span class="fn">UserProfile</span> userPromise={userPromise} /&gt;
+    &lt;/<span class="tp">Suspense</span>&gt;
+  );
+}</pre>
+              <p>
+                <strong>Reading context conditionally</strong> (impossible with
+                <code>useContext</code>):
+              </p>
+              <pre><span class="str">"use client"</span>;
+<span class="kw">import</span> { use } <span class="kw">from</span> <span class="str">"react"</span>;
+<span class="kw">import</span> { <span class="tp">ThemeContext</span> } <span class="kw">from</span> <span class="str">"./theme"</span>;
+
+<span class="kw">export function</span> <span class="fn">ThemedCard</span>({ useTheme }: { useTheme: <span class="tp">boolean</span> }) {
+  <span class="cm">// ✓ use() works inside conditionals — useContext does NOT</span>
+  <span class="kw">if</span> (useTheme) {
+    <span class="kw">const</span> theme = <span class="fn">use</span>(<span class="tp">ThemeContext</span>);
+    <span class="kw">return</span> &lt;div style={{ background: theme.bg }}&gt;Themed!&lt;/div&gt;;
+  }
+  <span class="kw">return</span> &lt;div&gt;Default&lt;/div&gt;;
+}
+
+<span class="cm">// Key differences:</span>
+<span class="cm">// useContext(ctx)  → must be at top level, can't be conditional</span>
+<span class="cm">// use(ctx)         → can be inside if/else, loops, try/catch</span>
+<span class="cm">// use(promise)     → suspends the component until resolved</span></pre>
+              <div class="version-note">
+                <strong>React 19 / Next.js 15+:</strong>
+                <code>use()</code> is a stable API in React 19. It replaces
+                patterns like <code>throw promise</code> (the old Suspense
+                mechanism) with a cleaner, composable API. The promise must be
+                created outside the Client Component (typically in a Server
+                Component) and passed as a prop.
+              </div>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>use(promise)</code> unwraps a Promise inside a Client
+                    Component — triggers Suspense
+                  </li>
+                  <li>
+                    <code>use(context)</code> reads context and can be called
+                    conditionally (unlike <code>useContext</code>)
+                  </li>
+                  <li>
+                    Pass promises from Server Components → Client Components to
+                    start fetching early
+                  </li>
+                  <li>
+                    Always wrap components using <code>use(promise)</code> in a
+                    <code>&lt;Suspense&gt;</code> boundary
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -2273,6 +2565,92 @@ app/
                   <li>
                     React 19 feature — works natively with Next.js 15+ Server
                     Actions
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">useTransition & pending UI</div>
+                <div class="topic-desc">
+                  Non-blocking mutations, isPending state, transitions
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>useTransition with Server Actions</h3>
+              <p>
+                When calling Server Actions outside of
+                <code>&lt;form&gt;</code> elements (e.g., on button clicks,
+                toggles, or drag events), use <code>useTransition</code> to get
+                a <strong>pending state</strong> and keep the UI responsive
+                during the mutation.
+              </p>
+              <pre><span class="str">"use client"</span>;
+<span class="kw">import</span> { useTransition } <span class="kw">from</span> <span class="str">"react"</span>;
+<span class="kw">import</span> { deletePost, publishPost } <span class="kw">from</span> <span class="str">"./actions"</span>;
+
+<span class="kw">export function</span> <span class="fn">PostActions</span>({ postId }: { postId: <span class="tp">number</span> }) {
+  <span class="kw">const</span> [isPending, startTransition] = <span class="fn">useTransition</span>();
+
+  <span class="kw">function</span> <span class="fn">handleDelete</span>() {
+    <span class="fn">startTransition</span>(<span class="kw">async</span> () =&gt; {
+      <span class="kw">await</span> <span class="fn">deletePost</span>(postId);
+      <span class="cm">// UI updates after revalidation — no manual setState needed</span>
+    });
+  }
+
+  <span class="kw">function</span> <span class="fn">handlePublish</span>() {
+    <span class="fn">startTransition</span>(<span class="kw">async</span> () =&gt; {
+      <span class="kw">await</span> <span class="fn">publishPost</span>(postId);
+    });
+  }
+
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;button onClick={handlePublish} disabled={isPending}&gt;
+        {isPending ? <span class="str">"Publishing..."</span> : <span class="str">"Publish"</span>}
+      &lt;/button&gt;
+      &lt;button onClick={handleDelete} disabled={isPending}&gt;
+        {isPending ? <span class="str">"Deleting..."</span> : <span class="str">"Delete"</span>}
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+              <p><strong>When to use which pattern:</strong></p>
+              <pre><span class="cm">// 1. &lt;form action={...}&gt; — for standard form submissions</span>
+<span class="cm">//    Use useFormStatus() for pending state inside the form</span>
+<span class="cm">//    Use useActionState() for form state + validation errors</span>
+
+<span class="cm">// 2. useTransition — for non-form mutations</span>
+<span class="cm">//    Button clicks, toggles, drag-and-drop, swipe actions</span>
+<span class="cm">//    Gives you isPending to disable UI / show spinners</span>
+
+<span class="cm">// 3. Direct await — fire-and-forget (rare)</span>
+<span class="cm">//    Only when you don't need pending state</span>
+<span class="cm">//    Example: logging, analytics, background tasks</span></pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>useTransition</code> wraps Server Action calls outside
+                    of forms — provides <code>isPending</code>
+                  </li>
+                  <li>
+                    The callback to <code>startTransition</code> can be
+                    <code>async</code> in React 19
+                  </li>
+                  <li>
+                    Keeps the UI responsive — React doesn't block rendering
+                    during the transition
+                  </li>
+                  <li>
+                    Combine with <code>useOptimistic</code> for instant feedback
+                    + pending state
                   </li>
                 </ul>
               </div>
@@ -2610,6 +2988,119 @@ app/
           <div class="topic">
             <div class="topic-header">
               <div>
+                <div class="topic-name">Cookies & Headers API</div>
+                <div class="topic-desc">
+                  Reading/writing cookies, request headers, dynamic APIs
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Cookies & Headers API</h3>
+              <p>
+                Next.js provides <code>cookies()</code> and
+                <code>headers()</code> functions to read and write HTTP cookies
+                and headers in Server Components, Server Actions, and Route
+                Handlers. Using these makes a route
+                <strong>dynamic</strong> (rendered at request time).
+              </p>
+              <pre><span class="cm">// Reading cookies in a Server Component</span>
+<span class="kw">import</span> { cookies } <span class="kw">from</span> <span class="str">"next/headers"</span>;
+
+<span class="kw">export default async function</span> <span class="fn">Page</span>() {
+  <span class="kw">const</span> cookieStore = <span class="kw">await</span> <span class="fn">cookies</span>();
+
+  <span class="kw">const</span> theme = cookieStore.<span class="fn">get</span>(<span class="str">"theme"</span>)?.value;       <span class="cm">// "dark"</span>
+  <span class="kw">const</span> locale = cookieStore.<span class="fn">get</span>(<span class="str">"locale"</span>)?.value;     <span class="cm">// "en"</span>
+  <span class="kw">const</span> hasConsent = cookieStore.<span class="fn">has</span>(<span class="str">"cookie-consent"</span>); <span class="cm">// boolean</span>
+  <span class="kw">const</span> all = cookieStore.<span class="fn">getAll</span>();                     <span class="cm">// all cookies</span>
+
+  <span class="kw">return</span> &lt;div&gt;Theme: {theme}&lt;/div&gt;;
+}
+
+<span class="cm">// Setting cookies in a Server Action</span>
+<span class="str">"use server"</span>;
+<span class="kw">import</span> { cookies } <span class="kw">from</span> <span class="str">"next/headers"</span>;
+
+<span class="kw">export async function</span> <span class="fn">setTheme</span>(theme: <span class="tp">string</span>) {
+  <span class="kw">const</span> cookieStore = <span class="kw">await</span> <span class="fn">cookies</span>();
+  cookieStore.<span class="fn">set</span>(<span class="str">"theme"</span>, theme, {
+    httpOnly: <span class="kw">true</span>,
+    secure: <span class="kw">true</span>,
+    sameSite: <span class="str">"lax"</span>,
+    maxAge: <span class="num">60</span> * <span class="num">60</span> * <span class="num">24</span> * <span class="num">365</span>, <span class="cm">// 1 year</span>
+    path: <span class="str">"/"</span>,
+  });
+}
+
+<span class="kw">export async function</span> <span class="fn">logout</span>() {
+  <span class="kw">const</span> cookieStore = <span class="kw">await</span> <span class="fn">cookies</span>();
+  cookieStore.<span class="fn">delete</span>(<span class="str">"session"</span>);
+}</pre>
+              <pre><span class="cm">// Reading request headers</span>
+<span class="kw">import</span> { headers } <span class="kw">from</span> <span class="str">"next/headers"</span>;
+
+<span class="kw">export default async function</span> <span class="fn">Page</span>() {
+  <span class="kw">const</span> headersList = <span class="kw">await</span> <span class="fn">headers</span>();
+
+  <span class="kw">const</span> userAgent = headersList.<span class="fn">get</span>(<span class="str">"user-agent"</span>);
+  <span class="kw">const</span> referer = headersList.<span class="fn">get</span>(<span class="str">"referer"</span>);
+  <span class="kw">const</span> ip = headersList.<span class="fn">get</span>(<span class="str">"x-forwarded-for"</span>);
+  <span class="kw">const</span> country = headersList.<span class="fn">get</span>(<span class="str">"x-vercel-ip-country"</span>); <span class="cm">// Vercel</span>
+
+  <span class="kw">return</span> &lt;div&gt;Your country: {country}&lt;/div&gt;;
+}
+
+<span class="cm">// Reading searchParams (also a dynamic API)</span>
+<span class="kw">export default async function</span> <span class="fn">SearchPage</span>({
+  searchParams,
+}: {
+  searchParams: <span class="tp">Promise</span>&lt;{ q?: <span class="tp">string</span>; page?: <span class="tp">string</span> }&gt;;
+}) {
+  <span class="kw">const</span> { q, page } = <span class="kw">await</span> searchParams;
+  <span class="kw">const</span> results = <span class="kw">await</span> <span class="fn">search</span>(q, <span class="fn">Number</span>(page) || <span class="num">1</span>);
+  <span class="kw">return</span> &lt;div&gt;Results for: {q}&lt;/div&gt;;
+}</pre>
+              <div class="version-note">
+                <strong>Next.js 15 breaking change:</strong>
+                <code>cookies()</code>, <code>headers()</code>, and
+                <code>searchParams</code> are all now <strong>async</strong> —
+                you must <code>await</code> them. In Next.js 14, they were
+                synchronous. This applies in Server Components, Server Actions,
+                and Route Handlers.
+              </div>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    <code>cookies()</code> reads/writes HTTP cookies —
+                    <code>get()</code>, <code>set()</code>,
+                    <code>delete()</code>, <code>has()</code>
+                  </li>
+                  <li>
+                    <code>headers()</code> is read-only — returns the incoming
+                    request headers
+                  </li>
+                  <li>
+                    Both are <strong>async in Next.js 15+</strong> — always
+                    <code>await</code> them
+                  </li>
+                  <li>
+                    Using any of these makes the route dynamic (rendered
+                    per-request, not cached)
+                  </li>
+                  <li>
+                    You can only <em>set</em> cookies in Server Actions, Route
+                    Handlers, or Middleware — not in Server Components
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
                 <div class="topic-name">Authentication</div>
                 <div class="topic-desc">
                   NextAuth/Auth.js, sessions, protecting routes
@@ -2767,6 +3258,102 @@ STRIPE_SECRET_KEY=<span class="str">"sk_live_..."</span></pre>
                   </li>
                   <li>
                     Restart dev server after changing <code>.env</code> files
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-header">
+              <div>
+                <div class="topic-name">Streaming & advanced responses</div>
+                <div class="topic-desc">
+                  Streaming responses, webhooks, CORS, SSE
+                </div>
+              </div>
+              <span class="topic-toggle">▼</span>
+            </div>
+            <div class="topic-content">
+              <h3>Streaming & Advanced Route Handler Patterns</h3>
+              <p>
+                Route Handlers support <strong>streaming responses</strong>,
+                <strong>Server-Sent Events (SSE)</strong>, and raw
+                <code>Response</code> objects for advanced API patterns.
+              </p>
+              <pre><span class="cm">// app/api/stream/route.ts — Streaming response</span>
+<span class="kw">export async function</span> <span class="fn">GET</span>() {
+  <span class="kw">const</span> encoder = <span class="kw">new</span> <span class="fn">TextEncoder</span>();
+  <span class="kw">const</span> stream = <span class="kw">new</span> <span class="fn">ReadableStream</span>({
+    <span class="kw">async</span> <span class="fn">start</span>(controller) {
+      <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++) {
+        controller.<span class="fn">enqueue</span>(encoder.<span class="fn">encode</span>(<span class="str">`data: chunk ${i}\n\n`</span>));
+        <span class="kw">await new</span> <span class="fn">Promise</span>(r =&gt; <span class="fn">setTimeout</span>(r, <span class="num">1000</span>));
+      }
+      controller.<span class="fn">close</span>();
+    },
+  });
+
+  <span class="kw">return new</span> <span class="fn">Response</span>(stream, {
+    headers: {
+      <span class="str">"Content-Type"</span>: <span class="str">"text/event-stream"</span>,
+      <span class="str">"Cache-Control"</span>: <span class="str">"no-cache"</span>,
+      <span class="str">"Connection"</span>: <span class="str">"keep-alive"</span>,
+    },
+  });
+}</pre>
+              <pre><span class="cm">// app/api/webhook/route.ts — Webhook handler</span>
+<span class="kw">import</span> { <span class="tp">NextRequest</span>, <span class="tp">NextResponse</span> } <span class="kw">from</span> <span class="str">"next/server"</span>;
+<span class="kw">import</span> crypto <span class="kw">from</span> <span class="str">"crypto"</span>;
+
+<span class="kw">export async function</span> <span class="fn">POST</span>(request: <span class="tp">NextRequest</span>) {
+  <span class="kw">const</span> body = <span class="kw">await</span> request.<span class="fn">text</span>();
+  <span class="kw">const</span> signature = request.headers.<span class="fn">get</span>(<span class="str">"x-webhook-signature"</span>);
+
+  <span class="cm">// Verify webhook signature</span>
+  <span class="kw">const</span> expected = crypto
+    .<span class="fn">createHmac</span>(<span class="str">"sha256"</span>, process.env.WEBHOOK_SECRET!)
+    .<span class="fn">update</span>(body)
+    .<span class="fn">digest</span>(<span class="str">"hex"</span>);
+
+  <span class="kw">if</span> (signature !== expected) {
+    <span class="kw">return</span> NextResponse.<span class="fn">json</span>({ error: <span class="str">"Invalid"</span> }, { status: <span class="num">401</span> });
+  }
+
+  <span class="kw">const</span> event = <span class="fn">JSON</span>.<span class="fn">parse</span>(body);
+  <span class="kw">await</span> <span class="fn">processWebhook</span>(event);
+  <span class="kw">return</span> NextResponse.<span class="fn">json</span>({ received: <span class="kw">true</span> });
+}
+
+<span class="cm">// CORS — enabling cross-origin requests</span>
+<span class="kw">export async function</span> <span class="fn">OPTIONS</span>() {
+  <span class="kw">return new</span> <span class="fn">Response</span>(<span class="kw">null</span>, {
+    headers: {
+      <span class="str">"Access-Control-Allow-Origin"</span>: <span class="str">"*"</span>,
+      <span class="str">"Access-Control-Allow-Methods"</span>: <span class="str">"GET, POST, OPTIONS"</span>,
+      <span class="str">"Access-Control-Allow-Headers"</span>: <span class="str">"Content-Type, Authorization"</span>,
+    },
+  });
+}</pre>
+              <div class="key-points">
+                <h4>Key Takeaways</h4>
+                <ul>
+                  <li>
+                    Use <code>ReadableStream</code> for streaming responses
+                    (SSE, AI chat, real-time data)
+                  </li>
+                  <li>
+                    Webhook handlers should verify signatures before processing
+                    events
+                  </li>
+                  <li>
+                    Export an <code>OPTIONS</code> handler for CORS preflight
+                    requests
+                  </li>
+                  <li>
+                    Route Handlers use standard Web APIs (<code>Request</code>,
+                    <code>Response</code>) — they work identically on Edge and
+                    Node
                   </li>
                 </ul>
               </div>
@@ -4357,32 +4944,43 @@ npm install next@latest react@latest react-dom@latest
         }
 
         document.addEventListener("click", handleClick, false);
-        document.addEventListener("touchend", function (e) {
-          if (
-            e.target.closest &&
-            (e.target.closest(".phase-header") || e.target.closest(".topic"))
-          ) {
-            e.preventDefault();
-            handleClick(e);
-          }
-        }, false);
+        document.addEventListener(
+          "touchend",
+          function (e) {
+            if (
+              e.target.closest &&
+              (e.target.closest(".phase-header") || e.target.closest(".topic"))
+            ) {
+              e.preventDefault();
+              handleClick(e);
+            }
+          },
+          false,
+        );
 
         var themeToggle = document.getElementById("themeToggle");
         if (themeToggle) {
-          themeToggle.addEventListener("change", function () {
-            var isDark = themeToggle.checked;
-            var roadmap = document.getElementById("roadmap");
-            if (isDark) {
-              roadmap.classList.add("dark");
-              document.body.classList.remove("light-mode");
-            } else {
-              roadmap.classList.remove("dark");
-              document.body.classList.add("light-mode");
-            }
-            try {
-              localStorage.setItem("nextjs-course-theme", isDark ? "dark" : "light");
-            } catch (ex) {}
-          }, false);
+          themeToggle.addEventListener(
+            "change",
+            function () {
+              var isDark = themeToggle.checked;
+              var roadmap = document.getElementById("roadmap");
+              if (isDark) {
+                roadmap.classList.add("dark");
+                document.body.classList.remove("light-mode");
+              } else {
+                roadmap.classList.remove("dark");
+                document.body.classList.add("light-mode");
+              }
+              try {
+                localStorage.setItem(
+                  "nextjs-course-theme",
+                  isDark ? "dark" : "light",
+                );
+              } catch (ex) {}
+            },
+            false,
+          );
         }
 
         try {
