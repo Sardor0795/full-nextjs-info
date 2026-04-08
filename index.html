@@ -225,13 +225,24 @@
       }
 
       .phase-body {
-        padding: 0 22px 20px;
+        display: grid;
+        grid-template-rows: 1fr;
+        transition: grid-template-rows 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      .phase-body.collapsed {
+        grid-template-rows: 0fr;
+      }
+      .phase-body-inner {
+        overflow: hidden;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 12px;
+        padding: 0 22px 20px;
+        opacity: 1;
+        transition: opacity 0.2s ease;
       }
-      .phase-body.collapsed {
-        display: none;
+      .phase-body.collapsed .phase-body-inner {
+        opacity: 0;
       }
 
       .topic {
@@ -289,15 +300,27 @@
       }
 
       .topic-content {
-        display: none;
-        margin-top: 18px;
-        padding-top: 18px;
-        border-top: 1px solid var(--rm-border);
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                    margin-top 0.35s ease;
+        margin-top: 0;
         min-width: 0;
-        overflow: hidden;
       }
       .topic.active .topic-content {
-        display: block;
+        grid-template-rows: 1fr;
+        margin-top: 18px;
+      }
+      .topic-content-inner {
+        overflow: hidden;
+        padding-top: 18px;
+        border-top: 1px solid var(--rm-border);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+      .topic.active .topic-content-inner {
+        opacity: 1;
+        transition: opacity 0.35s ease 0.1s;
       }
       .topic-content h3 {
         font-size: 18px;
@@ -502,7 +525,7 @@
         .progress-bar {
           margin: 0 16px 12px;
         }
-        .phase-body {
+        .phase-body-inner {
           padding: 0 16px 16px;
           grid-template-columns: 1fr;
           gap: 10px;
@@ -588,7 +611,7 @@
           margin: 0 14px 10px;
           height: 4px;
         }
-        .phase-body {
+        .phase-body-inner {
           padding: 0 14px 14px;
           grid-template-columns: 1fr;
           gap: 8px;
@@ -4905,6 +4928,30 @@ npm install next@latest react@latest react-dom@latest
           };
         }
 
+        // Wrap phase-body children in .phase-body-inner for grid animation
+        var phaseBodies = document.querySelectorAll(".phase-body");
+        for (var p = 0; p < phaseBodies.length; p++) {
+          var pb = phaseBodies[p];
+          var pbInner = document.createElement("div");
+          pbInner.className = "phase-body-inner";
+          while (pb.firstChild) {
+            pbInner.appendChild(pb.firstChild);
+          }
+          pb.appendChild(pbInner);
+        }
+
+        // Wrap topic-content children in .topic-content-inner for grid animation
+        var topicContents = document.querySelectorAll(".topic-content");
+        for (var t = 0; t < topicContents.length; t++) {
+          var tc = topicContents[t];
+          var tcInner = document.createElement("div");
+          tcInner.className = "topic-content-inner";
+          while (tc.firstChild) {
+            tcInner.appendChild(tc.firstChild);
+          }
+          tc.appendChild(tcInner);
+        }
+
         function handleClick(e) {
           var target = e.target;
 
@@ -4927,7 +4974,7 @@ npm install next@latest react@latest react-dom@latest
           var topic = target.closest ? target.closest(".topic") : null;
           if (topic) {
             var wasActive = topic.classList.contains("active");
-            var phase = topic.closest(".phase-body");
+            var phase = topic.closest(".phase-body-inner") || topic.closest(".phase-body");
             if (phase) {
               var activeTopics = phase.querySelectorAll(".topic.active");
               for (var i = 0; i < activeTopics.length; i++) {
@@ -4938,7 +4985,7 @@ npm install next@latest react@latest react-dom@latest
               topic.classList.add("active");
               setTimeout(function () {
                 topic.scrollIntoView({ behavior: "smooth", block: "nearest" });
-              }, 50);
+              }, 200);
             }
           }
         }
