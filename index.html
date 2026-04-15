@@ -235,7 +235,7 @@
       .phase-body-inner {
         overflow: hidden;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 12px;
         padding: 0 22px 20px;
         opacity: 1;
@@ -302,8 +302,9 @@
       .topic-content {
         display: grid;
         grid-template-rows: 0fr;
-        transition: grid-template-rows 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                    margin-top 0.35s ease;
+        transition:
+          grid-template-rows 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+          margin-top 0.35s ease;
         margin-top: 0;
         min-width: 0;
       }
@@ -4974,7 +4975,9 @@ npm install next@latest react@latest react-dom@latest
           var topic = target.closest ? target.closest(".topic") : null;
           if (topic) {
             var wasActive = topic.classList.contains("active");
-            var phase = topic.closest(".phase-body-inner") || topic.closest(".phase-body");
+            var phase =
+              topic.closest(".phase-body-inner") ||
+              topic.closest(".phase-body");
             if (phase) {
               var activeTopics = phase.querySelectorAll(".topic.active");
               for (var i = 0; i < activeTopics.length; i++) {
