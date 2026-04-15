@@ -4991,19 +4991,6 @@ npm install next@latest react@latest react-dom@latest
         }
 
         document.addEventListener("click", handleClick, false);
-        document.addEventListener(
-          "touchend",
-          function (e) {
-            if (
-              e.target.closest &&
-              (e.target.closest(".phase-header") || e.target.closest(".topic"))
-            ) {
-              e.preventDefault();
-              handleClick(e);
-            }
-          },
-          false,
-        );
 
         var themeToggle = document.getElementById("themeToggle");
         if (themeToggle) {
