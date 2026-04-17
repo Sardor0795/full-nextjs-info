@@ -58,7 +58,7 @@
 
       /* ── Base ── */
       .roadmap {
-        padding: 28px 20px;
+        padding: 0px 20px 28px;
         min-height: 100vh;
         box-sizing: border-box;
         font-family:
@@ -84,8 +84,12 @@
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        padding: 0 22px 12px;
+        padding: 24px 22px 24px;
         gap: 10px;
+        position: sticky;
+        top: 0;
+        background-color: var(--rm-bg);
+        z-index: 9999;
       }
       .theme-label {
         font-size: 13px;
@@ -539,7 +543,7 @@
       /* ── Responsive — Tablet ── */
       @media (max-width: 768px) {
         .roadmap {
-          padding: 16px 0;
+          padding: 0px 0;
         }
         .phase {
           margin-bottom: 24px;
@@ -603,7 +607,7 @@
           font-size: 13.5px;
         }
         .theme-bar {
-          padding: 0 16px 10px;
+          padding: 26px 16px 26px;
         }
         .lang-btn {
           font-size: 12px;
@@ -618,7 +622,7 @@
       /* ── Responsive — Mobile ── */
       @media (max-width: 480px) {
         .roadmap {
-          padding: 10px 0;
+          padding: 0px 0;
         }
         .phase {
           margin-bottom: 20px;
@@ -710,7 +714,7 @@
           line-height: 1.6;
         }
         .theme-bar {
-          padding: 0 14px 8px;
+          padding: 8px 14px 8px;
         }
         .lang-btn {
           font-size: 11px;
@@ -5023,20 +5027,10 @@ npm install next@latest react@latest react-dom@latest
           var topic = target.closest ? target.closest(".topic") : null;
           if (topic) {
             var wasActive = topic.classList.contains("active");
-            var phase =
-              topic.closest(".phase-body-inner") ||
-              topic.closest(".phase-body");
-            if (phase) {
-              var activeTopics = phase.querySelectorAll(".topic.active");
-              for (var i = 0; i < activeTopics.length; i++) {
-                activeTopics[i].classList.remove("active");
-              }
-            }
-            if (!wasActive) {
+            if (wasActive) {
+              topic.classList.remove("active");
+            } else {
               topic.classList.add("active");
-              setTimeout(function () {
-                topic.scrollIntoView({ behavior: "smooth", block: "nearest" });
-              }, 200);
             }
           }
         }
