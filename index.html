@@ -152,6 +152,40 @@
         transform: translateX(24px);
       }
 
+      /* ── Language Toggle ── */
+      .lang-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        border: 1px solid var(--rm-border);
+        border-radius: 20px;
+        overflow: hidden;
+        background: var(--rm-bg-tertiary);
+        transition: border-color 0.3s, background 0.3s;
+        flex-shrink: 0;
+        margin-right: auto;
+      }
+      .lang-btn {
+        padding: 4px 12px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        background: transparent;
+        color: var(--rm-text-tertiary);
+        cursor: pointer;
+        transition: background 0.25s, color 0.25s;
+        line-height: 1.4;
+        font-family: inherit;
+      }
+      .lang-btn.active {
+        background: var(--rm-text);
+        color: var(--rm-bg);
+        border-radius: 20px;
+      }
+      .lang-btn:not(.active):hover {
+        color: var(--rm-text);
+      }
+
       .phase {
         margin-bottom: 32px;
         border-radius: 14px;
@@ -567,6 +601,10 @@
         .theme-bar {
           padding: 0 16px 10px;
         }
+        .lang-btn {
+          font-size: 12px;
+          padding: 3px 10px;
+        }
         .version-note {
           font-size: 13px;
           padding: 10px 14px;
@@ -672,6 +710,10 @@
         .theme-bar {
           padding: 0 14px 8px;
         }
+        .lang-btn {
+          font-size: 11px;
+          padding: 3px 8px;
+        }
         .theme-label {
           font-size: 12px;
         }
@@ -699,7 +741,11 @@
   <body>
     <div class="roadmap dark" id="roadmap">
       <div class="theme-bar">
-        <span class="theme-label">Theme</span>
+        <div class="lang-toggle" id="langToggle">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="uz">UZ</button>
+        </div>
+        <span class="theme-label" id="themeLabel">Theme</span>
         <label class="theme-switch" title="Toggle dark mode">
           <input type="checkbox" id="themeToggle" checked />
           <span class="theme-slider"
@@ -5028,6 +5074,850 @@ npm install next@latest react@latest react-dom@latest
             document.body.classList.add("light-mode");
           }
         } catch (ex) {}
+
+        /* ═══════════════════════════════════════════════════════ */
+        /* LANGUAGE TOGGLE — UZ / EN                              */
+        /* ═══════════════════════════════════════════════════════ */
+        var currentLang = "en";
+        var enCache = {};
+
+        var uz = {
+          pageTitle: "Next.js To'liq Kurs",
+          themeLabel: "Tema",
+          phaseTitles: [
+            "Asos — Boshlash",
+            "Routing mahorati",
+            "Rendering va ma'lumot olish",
+            "Server Actions va mutatsiyalar",
+            "API va backend integratsiya",
+            "Stillar va resurslar",
+            "Samaradorlik va ishlab chiqarish",
+            "Deploy va DevOps",
+            "Versiyalar evolyutsiyasi va yangiliklar"
+          ],
+          phaseTags: [
+            "1-hafta", "2–3-hafta", "3–4-hafta", "5-hafta", "6-hafta",
+            "7-hafta", "8-hafta", "9-hafta", "10-hafta"
+          ],
+          topicNames: [
+            /* Phase 1 */
+            "Next.js nima va nima uchun kerak",
+            "Loyihani sozlash",
+            "Loyiha tuzilmasi",
+            "Sahifalar va asosiy routing",
+            "Havolalar va navigatsiya",
+            "Metadata va SEO",
+            /* Phase 2 */
+            "Dinamik marshrutlar",
+            "Layoutlar va shablonlar",
+            "Marshrut guruhlari",
+            "Parallel va intercepting marshrutlar",
+            "Yuklanish va xato holatlari",
+            "Qayta yo'naltirishlar va rewrite'lar",
+            /* Phase 3 */
+            "Server komponentlari",
+            "Client komponentlari",
+            "Kompozitsiya patternlari",
+            "server-only va client-only",
+            "Ma'lumot olish patternlari",
+            "Keshlash chuqur tahlili",
+            "Streaming va Suspense",
+            "Statik va dinamik rendering",
+            "use() hook",
+            /* Phase 4 */
+            "Server Actions asoslari",
+            "Formalarni boshqarish",
+            "Optimistik yangilanishlar",
+            "useTransition va kutish UI",
+            "Revalidatsiya strategiyalari",
+            "Fayl yuklash",
+            "Server Actions xavfsizligi",
+            /* Phase 5 */
+            "Route Handler'lar",
+            "Middleware",
+            "Cookie'lar va Header'lar API",
+            "Autentifikatsiya",
+            "Ma'lumotlar bazasi integratsiyasi",
+            "Muhit o'zgaruvchilari",
+            "Streaming va murakkab javoblar",
+            "Edge va Node runtime",
+            /* Phase 6 */
+            "CSS Modules va Tailwind",
+            "next/font",
+            "next/image",
+            "next/script",
+            "Mavzu va qorong'i rejim",
+            "Komponent kutubxonalari",
+            /* Phase 7 */
+            "Kod bo'lish va lazy loading",
+            "Bundle tahlili",
+            "SEO eng yaxshi amaliyotlar",
+            "Xalqarolashtirish",
+            "Testlash",
+            "Core Web Vitals",
+            /* Phase 8 */
+            "Vercel'ga deploy",
+            "O'z serverida hosting",
+            "Statik eksport",
+            "CI/CD pipeline'lar",
+            "Monitoring va analitika",
+            "Xavfsizlik eng yaxshi amaliyotlari",
+            /* Phase 9 */
+            "Pages Router va App Router",
+            "Next.js 12 → 13",
+            "Next.js 13 → 14",
+            "Next.js 14 → 15",
+            "Next.js 15 → 16",
+            "Migratsiya qo'llanmasi"
+          ],
+          topicDescs: [
+            /* Phase 1 */
+            "React freymvorki, SSR, SSG, full-stack imkoniyatlar",
+            "create-next-app, TypeScript, Tailwind, ESLint",
+            "app/, layout, page, konventsiyalar, maxsus fayllar",
+            "page.tsx, ichki marshrutlar, marshrut segmentlari",
+            "Link komponenti, useRouter, usePathname",
+            "title, description, Open Graph, generateMetadata",
+            /* Phase 2 */
+            "[id], [...slug], [[...slug]], catch-all segmentlar",
+            "Ichki layoutlar, umumiy UI, layout va template farqi",
+            "(folder) tashkilot, bir nechta root layoutlar",
+            "@slotlar, (.) konventsiya, modallar",
+            "loading.tsx, error.tsx, Suspense chegaralari",
+            "redirect(), permanentRedirect(), next.config",
+            /* Phase 3 */
+            "RSC, async komponentlar, klientda nol JS",
+            "\"use client\", interaktivlik, hooklar, chegaralar",
+            "Server + Client chegaralari, children pattern, aralashma",
+            "Chegaralar bo'ylab tasodifiy kod oqishini oldini olish",
+            "fetch, async komponentlar, parallel olish",
+            "So'rov memorizatsiyasi, ma'lumot keshi, to'liq marshrut keshi",
+            "Progressiv rendering, loading.tsx, streaming SSR",
+            "SSG, SSR, ISR, PPR, qachon qaysi biri ishlatiladi",
+            "Client komponentlarida promise va kontekstni o'qish (React 19)",
+            /* Phase 4 */
+            "\"use server\", form action'lar, inline action'lar",
+            "useActionState, useFormStatus, validatsiya",
+            "useOptimistic, tezkor UI javob",
+            "Blokirovkasiz mutatsiyalar, isPending holati, transition'lar",
+            "revalidatePath, revalidateTag, on-demand ISR",
+            "FormData, fayl boshqaruvi, hajm cheklovlari",
+            "Auth tekshiruvlari, tezlik cheklash, CSRF himoya",
+            /* Phase 5 */
+            "GET, POST, route.ts, tipli API javoblar",
+            "Auth, qayta yo'naltirish, headerlar, geolokatsiya",
+            "Cookie o'qish/yozish, so'rov headerlari, dinamik API'lar",
+            "NextAuth/Auth.js, sessiyalar, marshrutlarni himoyalash",
+            "Prisma, Drizzle, ulanish pooling",
+            "NEXT_PUBLIC_, .env fayllar, runtime konfiguratsiya",
+            "Streaming javoblar, webhooklar, CORS, SSE",
+            "Runtime tanlash, cheklovlar, foydalanish holatlari",
+            /* Phase 6 */
+            "Skoplangan CSS, utility-first, global stillar",
+            "Shrift optimallashtirish, Google Fonts, lokal shriftlar",
+            "Rasm optimallashtirish, responsiv rasmlar, lazy loading",
+            "Uchinchi tomon skriptlar, yuklash strategiyalari",
+            "next-themes, CSS o'zgaruvchilar, tizim sozlamalari",
+            "shadcn/ui, Radix, Headless UI integratsiya",
+            /* Phase 7 */
+            "dynamic importlar, React.lazy, marshrut asosida bo'lish",
+            "@next/bundle-analyzer, JS hajmini kamaytirish",
+            "Sayt xaritasi, robots.txt, strukturalangan ma'lumot, OG rasmlar",
+            "i18n routing, tarjimalar, tilni aniqlash",
+            "Vitest, Playwright, Testing Library, mocklar",
+            "LCP, FID, CLS, samaradorlik monitoringi",
+            /* Phase 8 */
+            "Git integratsiya, preview deploylar, analitika",
+            "Docker, Node.js server, standalone chiqish",
+            "output: \"export\", statik HTML, CDN hosting",
+            "GitHub Actions, avtomatlashtirilgan testlar, preview deploylar",
+            "Vercel Analytics, Sentry, loglar",
+            "Headerlar, CSP, CORS, tezlik cheklash",
+            /* Phase 9 */
+            "Asosiy arxitektura o'zgarishi",
+            "App Router, RSC, Turbopack kirishi",
+            "Server Actions barqaror, Turbopack yaxshilanishlari",
+            "React 19, asinxron API'lar, keshlash o'zgarishlari",
+            "Turbopack buildlar, yangi funksiyalar, React yaxshilanishlari",
+            "Qadam-baqadam yangilash yo'li, codemodlar"
+          ],
+          h3s: [
+            /* Phase 1 */
+            "Next.js nima?",
+            "create-next-app bilan loyihani sozlash",
+            "Loyiha tuzilmasi va konventsiyalar",
+            "Sahifalar va asosiy routing",
+            "Havolalar va navigatsiya",
+            "Metadata va SEO",
+            /* Phase 2 */
+            "Dinamik marshrutlar",
+            "Layoutlar va shablonlar",
+            "Marshrut guruhlari",
+            "Parallel va intercepting marshrutlar",
+            "Yuklanish va xato holatlari",
+            "Qayta yo'naltirishlar va rewrite'lar",
+            /* Phase 3 */
+            "React server komponentlari (RSC)",
+            "Client komponentlari",
+            "Server va Client kompozitsiya patternlari",
+            "server-only va client-only paketlari",
+            "Ma'lumot olish patternlari",
+            "Next.js'da keshlash",
+            "Streaming va Suspense",
+            "Statik va dinamik rendering",
+            "<code>use()</code> hook (React 19)",
+            /* Phase 4 */
+            "Server Actions",
+            "Murakkab formalarni boshqarish",
+            "Optimistik yangilanishlar",
+            "Server Actions bilan useTransition",
+            "Revalidatsiya strategiyalari",
+            "Server Actions bilan fayl yuklash",
+            "Server Actions xavfsizligi",
+            /* Phase 5 */
+            "Route Handler'lar (API marshrutlari)",
+            "Middleware",
+            "Cookie'lar va Header'lar API",
+            "Auth.js bilan autentifikatsiya",
+            "Ma'lumotlar bazasi integratsiyasi",
+            "Muhit o'zgaruvchilari",
+            "Streaming va murakkab Route Handler patternlari",
+            "Edge va Node.js runtime",
+            /* Phase 6 */
+            "CSS Modules va Tailwind CSS",
+            "next/font bilan shrift optimallashtirish",
+            "next/image bilan rasm optimallashtirish",
+            "Skript optimallashtirish",
+            "Mavzu va qorong'i rejim",
+            "Komponent kutubxonalari",
+            /* Phase 7 */
+            "Kod bo'lish va lazy loading",
+            "Bundle tahlili va optimallashtirish",
+            "SEO eng yaxshi amaliyotlar",
+            "Xalqarolashtirish (i18n)",
+            "Next.js ilovalarni testlash",
+            "Core Web Vitals",
+            /* Phase 8 */
+            "Vercel'ga deploy qilish",
+            "Next.js'ni o'z serverida hosting qilish",
+            "Statik eksport",
+            "GitHub Actions bilan CI/CD",
+            "Monitoring va analitika",
+            "Xavfsizlik eng yaxshi amaliyotlari",
+            /* Phase 9 */
+            "Pages Router va App Router",
+            "Next.js 12 → 13: App Router inqilobi",
+            "Next.js 13 → 14: Server Actions barqarorlashdi",
+            "Next.js 14 → 15: katta o'zgarishlar va React 19",
+            "Next.js 16: yangiliklar",
+            "Migratsiya qo'llanmasi"
+          ],
+          keyPointsTitle: "Asosiy xulosalar",
+          paragraphs: [
+            /* === Phase 1 === */
+            /* T1: What is Next.js */
+            "Next.js — Vercel tomonidan yaratilgan <strong>React freymvorki</strong> bo'lib, ishlab chiqarish uchun zarur bo'lgan hamma narsani beradi: server tomonida rendering, statik generatsiya, API marshrutlari, fayl asosidagi routing va boshqalar — tayyor holda. Webpack, babel, routing kutubxonalari va SSR'ni o'zingiz sozlash o'rniga, Next.js bularning hammasini boshqaradi.",
+            "<strong>Nima uchun oddiy React o'rniga Next.js?</strong>",
+            /* T2: Project setup */
+            "Next.js loyihasini boshlashning eng tez yo'li — <code>create-next-app</code>. U hamma narsani sozlaydi: TypeScript, ESLint, Tailwind CSS va App Router.",
+            "<strong>package.json'dagi asosiy skriptlar:</strong>",
+            /* T3: Project structure */
+            "Next.js <strong>fayl tizimi konventsiyalaridan</strong> foydalanadi. <code>app/</code> katalogidagi muayyan fayl nomlari maxsus ma'noga ega:",
+            "<strong>App Router'dagi maxsus fayl nomlari</strong>:",
+            /* T4: Pages & routing */
+            "Next.js'da <strong>papkalar URL segmentlarini yaratadi</strong> va <code>page.tsx</code> ularni navigatsiya qilinadigan qiladi. Router konfiguratsiyasi kerak emas.",
+            "<strong>Root layout</strong> talab qilinadi — u har bir sahifani o'rab turadi:",
+            /* T5: Linking */
+            "Next.js klient tomonidagi navigatsiya uchun <code>&lt;Link&gt;</code> komponentini beradi. U marshrutlarni avtomatik oldindan yuklaydi va tezkor o'tishlarni ta'minlaydi.",
+            "<code>useRouter</code> bilan <strong>programmatik navigatsiya</strong> (faqat client komponentlarida):",
+            /* T6: Metadata */
+            "Next.js <code>&lt;head&gt;</code> teglarini boshqarish uchun o'rnatilgan Metadata API'ga ega — sarlavhalar, tavsiflar, Open Graph rasmlar va boshqalar.",
+            "Ma'lumotli sahifalar uchun <strong>dinamik metadata</strong>:",
+            /* === Phase 2 === */
+            /* T7: Dynamic routes */
+            "Dinamik URL segmentlarini yaratish uchun papka nomlarini qavsga oling. Parametr qiymati sahifaga prop sifatida uzatiladi.",
+            "Statik generatsiya uchun <strong>statik parametrlarni generatsiya qilish</strong>:",
+            /* T8: Layouts */
+            "<strong>Layoutlar</strong> sahifalarni o'rab turadi va navigatsiya paytida saqlanadi — komponent boshqa sahifaga o'tganingizda unmount bo'lmaydi. Bu holatni saqlaydi (scroll pozitsiyasi yoki input qiymatlari kabi).",
+            "<strong>Shablonlar</strong> layoutlarga o'xshaydi, lekin har bir navigatsiyada <strong>qayta mount bo'ladi</strong> (yangi nusxa yaratadi). Ularni kirish/chiqish animatsiyalari yoki sahifa bo'yicha loglash uchun ishlating:",
+            /* T9: Route groups */
+            "URL'ga ta'sir qilmasdan marshrutlarni tashkil qilish uchun papka nomlarini <strong>qavslarga</strong> oling. Papka nomi yo'ldan chiqariladi.",
+            "Har bir marshrut guruhi o'zining <code>layout.tsx</code>'iga ega bo'lishi mumkin, bu sizga bitta ilovada <strong>bir nechta root layoutlar</strong> beradi — marketing, ilova va auth sahifalari uchun turli vizual qobiqlar.",
+            /* T10: Parallel & intercepting */
+            "<strong>Parallel marshrutlar</strong> bitta layoutda bir vaqtda bir nechta sahifani <strong>nomlangan slotlar</strong> (<code>@slotNomi</code>) yordamida ko'rsatishga imkon beradi:",
+            "<strong>Intercepting marshrutlar</strong> marshrutni joriy layout ichida (masalan, modallar) yuklashga imkon beradi. Qo'shni elementni intercept qilish uchun <code>(.)</code>, ota element uchun <code>(..)</code> ishlating:",
+            /* T11: Loading & error */
+            "Next.js maxsus fayllar orqali o'rnatilgan yuklanish va xatolarni boshqarishni beradi. <code>loading.tsx</code> sahifa atrofida avtomatik <code>Suspense</code> chegarasini yaratadi.",
+            "<strong>Xato chegaralari</strong> xatolarni ushlaydi va zaxira UI ko'rsatadi:",
+            /* T12: Redirects */
+            "Next.js foydalanuvchilarni qayta yo'naltirish uchun bir nechta usulni taklif qiladi — komponentlarda, middleware'da yoki konfiguratsiyada.",
+            "<code>next.config.ts</code>'da <strong>konfiguratsiya asosidagi qayta yo'naltirishlar va rewrite'lar</strong>:",
+            /* === Phase 3 === */
+            /* T13: Server Components */
+            "Next.js App Router'da komponentlar <strong>sukut bo'yicha server komponentlaridir</strong>. Ular serverda ishlaydi, <code>async</code> bo'lishi mumkin va klientga nol JavaScript yuboradi.",
+            /* T14: Client Components */
+            "Faylning yuqorisiga <code>\"use client\"</code> qo'shing va uni Client komponentiga aylantiring. Ular interaktivlik uchun kerak: hooklar, event handlerlar va brauzer API'lari.",
+            "<strong>Eng yaxshi amaliyot:</strong> Client komponentlarni kichik saqlang va komponent daraxtining barglariga joylashtiring. Ma'lumotlarni Server komponentlarida oling, pastga uzating:",
+            /* T15: Composition */
+            "Yaxshi arxitekturalangan Next.js ilovasining kaliti — <strong>client chegarasini qayerga qo'yishni</strong> bilishdir. Server komponentlari Client komponentlarini render qila oladi, lekin Client komponentlari Server komponentlarini to'g'ridan-to'g'ri import qila olmaydi. Biroq, Server komponentlarini <strong>children sifatida uzatish</strong> mumkin.",
+            "<strong>Keng tarqalgan kompozitsiya patternlari:</strong>",
+            /* T16: server-only */
+            "Ushbu paketlar <strong>build vaqtida himoya</strong> beradi — agar server kodi tasodifan Client komponentiga import qilinsa yoki aksincha bo'lsa, xato chiqaradi. Bu sirlarning oqib ketishi yoki serverga og'ir kodning brauzerga yuborilishini oldini oladi.",
+            "<strong>Taint API</strong> qo'shimcha himoya uchun:",
+            /* T17: Data fetching */
+            "App Router'da siz ma'lumotlarni Server komponentlarida <code>async/await</code> yordamida to'g'ridan-to'g'ri olasiz. <code>getServerSideProps</code> yoki <code>getStaticProps</code> kerak emas.",
+            /* T18: Caching */
+            "Next.js <strong>to'rt qatlam keshlashga</strong> ega. Ularni tushunish ishlab chiqarish ilovalari uchun muhimdir.",
+            "<strong>Bekor qilish:</strong>",
+            /* T19: Streaming */
+            "Streaming serverdan UI'ni bosqichma-bosqich yuborish imkonini beradi. Tez qismlar darhol renderlanadi; sekin qismlar tayyor bo'lganda oqib keladi, butun sahifani bloklamaydi.",
+            /* T20: Static vs dynamic */
+            "Next.js marshrutning <strong>statik</strong> (build vaqtida renderlangan) yoki <strong>dinamik</strong> (so'rov vaqtida renderlangan) ekanligini kodingiz nima qilishiga qarab avtomatik aniqlaydi.",
+            /* T21: use() hook */
+            "React 19 <code>use()</code>'ni taqdim etdi — Client komponentlari ichida <strong>promiselarni o'qish</strong> va <strong>kontekstni o'qish</strong> mumkin bo'lgan yangi hook. Boshqa hooklardan farqli, <code>use()</code>'ni shartlar va tsikllar ichida chaqirish mumkin.",
+            "<code>useContext</code> bilan imkonsiz bo'lgan <strong>shartli kontekst o'qish</strong>:",
+            /* === Phase 4 === */
+            /* T22: Server Actions basics */
+            "Server Actions — bu <strong>serverda ishlaydigan asinxron funksiyalar</strong> bo'lib, UI'dan to'g'ridan-to'g'ri chaqiriladi. Ular mutatsiyalar (yaratish, yangilash, o'chirish) uchun API marshrutlarini almashtiradi.",
+            /* T23: Form handling */
+            "Yuklanish holatlari va validatsiya javoblari bilan formalar uchun <code>useActionState</code> va <code>useFormStatus</code> ishlating.",
+            /* T24: Optimistic updates */
+            "Server tasdiqlashidan oldin UI'da o'zgarishlarni darhol ko'rsating. Agar amal muvaffaqiyatsiz bo'lsa, optimistik holat avtomatik qaytadi.",
+            /* T25: useTransition */
+            "Server Actions'ni <code>&lt;form&gt;</code> elementlaridan tashqarida chaqirganda (masalan, tugma bosilganda, togglelarda yoki drag hodisalarida), mutatsiya paytida <strong>kutish holatini</strong> olish va UI'ni javob beruvchi saqlash uchun <code>useTransition</code> ishlating.",
+            "<strong>Qaysi patternni qachon ishlatish kerak:</strong>",
+            /* T26: Revalidation */
+            "Server Actions bilan ma'lumotlarni o'zgartirgandan so'ng, Next.js'ga keshlangan ma'lumotlarni yangilashni aytishingiz kerak. Ikkita asosiy yondashuv mavjud.",
+            /* T27: File uploads */
+            /* (no paragraphs, starts with pre) */
+            /* T28: Server Actions security */
+            "Server Actions aslida HTTP POST endpointlaridir. <strong>Har doim validatsiya qiling va avtorizatsiya qiling</strong> — har kim ularni chaqirishi mumkin.",
+            /* === Phase 5 === */
+            /* T29: Route Handlers */
+            "Route handler'lar <code>route.ts</code> fayllari yordamida API endpointlarini yaratadi. Ular HTTP metodlari nomidagi funksiyalarni eksport qiladi.",
+            /* T30: Middleware */
+            "Middleware har bir mos keladigan so'rovdan <strong>oldin ishlaydi</strong>. U loyiha ildizidagi bitta <code>middleware.ts</code> faylida aniqlanadi.",
+            /* T31: Cookies & Headers */
+            "Next.js Server komponentlari, Server Actions va Route Handler'larda HTTP cookie va headerlarni o'qish va yozish uchun <code>cookies()</code> va <code>headers()</code> funksiyalarini beradi. Ularni ishlatish marshrutni <strong>dinamik</strong> qiladi (so'rov vaqtida renderlanadi).",
+            /* T32: Auth */
+            "<strong>Auth.js</strong> (avvalgi NextAuth.js) — Next.js uchun standart autentifikatsiya yechimi. U OAuth, credentials, magic linklar va boshqalarni qo'llab-quvvatlaydi.",
+            /* T33: Database */
+            "Next.js har qanday ma'lumotlar bazasi bilan ishlaydi. <strong>Prisma</strong> va <strong>Drizzle ORM</strong> eng mashhur tanlovlardir.",
+            /* T34: Env vars */
+            /* (no paragraphs, starts with pre) */
+            /* T35: Streaming & advanced */
+            "Route Handler'lar <strong>streaming javoblar</strong>, <strong>Server-Sent Events (SSE)</strong> va murakkab API patternlari uchun xom <code>Response</code> obyektlarini qo'llab-quvvatlaydi.",
+            /* T36: Edge vs Node */
+            "Next.js har bir marshrut uchun runtime tanlash imkonini beradi: <strong>Node.js</strong> (sukut bo'yicha, to'liq API) yoki <strong>Edge</strong> (tezkor, cheklangan API, global tarqatish).",
+            /* === Phase 6 === */
+            /* T37: CSS Modules & Tailwind */
+            "Next.js <strong>CSS Modules</strong> (sukut bo'yicha skoplangan) va <strong>Tailwind CSS</strong> (utility-first) ni tayyor holda qo'llab-quvvatlaydi.",
+            /* T38: next/font */
+            "<code>next/font</code> shriftlarni avtomatik optimallashtiradi: o'z serverida joylashtiradi, layout siljishini yo'qotadi va Google Fonts hamda lokal shriftlarni qo'llab-quvvatlaydi.",
+            /* T39: next/image */
+            "<code>&lt;Image&gt;</code> komponenti rasmlarni avtomatik optimallashtiradi: o'lchamini o'zgartiradi, WebP/AVIF'ga aylantiradi, lazy load qiladi va layout siljishini oldini oladi.",
+            /* T40: next/script (no paragraphs) */
+            /* T41: Theming (no paragraphs, starts with pre) */
+            /* T42: Component libs */
+            "<strong>shadcn/ui</strong> Next.js + Tailwind uchun eng mashhur komponent kutubxonasi. U komponentlarni loyihangizga ko'chiradi (dependency emas).",
+            /* === Phase 7 === */
+            /* T43: Code splitting */
+            "Next.js marshrut bo'yicha avtomatik kod bo'lishni amalga oshiradi. Komponent darajasida bo'lish uchun <code>next/dynamic</code> ishlating.",
+            /* T44: Bundle analysis */
+            /* (starts with pre, then has a paragraph) */
+            "<strong>Keng tarqalgan optimallashtirishlar:</strong>",
+            /* T45: SEO (no paragraph, starts with pre) */
+            /* T46: i18n */
+            "App Router'da i18n marshrut segmentlari va til aniqlash uchun middleware yordamida amalga oshiriladi.",
+            /* T47: Testing (no paragraph, starts with pre) */
+            /* T48: Core Web Vitals */
+            "Next.js Google qidiruv reytingi uchun foydalanadigan uchta Core Web Vitals ko'rsatkichini optimallashtirish uchun yaratilgan:",
+            /* === Phase 8 === */
+            /* T49: Vercel deploy */
+            "Vercel Next.js jamoasi tomonidan yaratilgan — bu eng oson va eng optimallashtirilgan deploy usuli. Git'ga push qiling va u avtomatik deploylanadi.",
+            /* T50: Self-hosting (no leading paragraph) */
+            "<strong>Docker bilan deploy:</strong>",
+            /* T51: Static export */
+            "Agar sizga server xususiyatlari kerak bo'lmasa, Next.js ilovangizni statik HTML fayllari sifatida eksport qiling.",
+            /* T52: CI/CD (no paragraph, starts with pre) */
+            /* T53: Monitoring (no paragraph, starts with pre) */
+            /* T54: Security (no paragraph, starts with pre) */
+            /* === Phase 9 === */
+            /* T55: Pages vs App Router */
+            "Next.js tarixidagi eng katta o'zgarish. <strong>Pages Router</strong> (13-dan oldingi) va <strong>App Router</strong> (13+) tubdan farqli arxitekturalardir.",
+            /* T56: 12→13 */
+            "Next.js 13 (2022-yil okt) eng katta yangilanish bo'ldi — App Router, React Server Components va Turbopackni taqdim etdi.",
+            /* T57: 13→14 */
+            "Next.js 14 (2023-yil okt) asosiy xususiyatlarni barqarorlashtirdi va dasturchi tajribasiga e'tibor qaratdi.",
+            /* T58: 14→15 */
+            "Next.js 15 (2024-yil okt) React 19 bilan moslashtirilib, muhim buziluvchi o'zgarishlarni olib keldi.",
+            /* T59: 15→16 */
+            "Next.js 16 <strong>ishlab chiqarishga tayyor Turbopack</strong>, yaxshilangan rendering va dasturchi tajribasiga e'tibor qaratadi.",
+            /* T60: Migration */
+            "Next.js asosiy versiyalar orasida yangilashga yordam beruvchi avtomatlashtirilgan codemodlarni beradi."
+          ],
+          versionNotes: [
+            /* Phase 1 */
+            "<strong>Versiya eslatmasi:</strong> Next.js'da ikkita routing tizimi mavjud. <strong>Pages Router</strong> (eski, 13-dan oldingi) va <strong>App Router</strong> (Next.js 13+, tavsiya etiladi). Ushbu kurs faqat App Router'dan foydalanadi.",
+            "<strong>Next.js 15:</strong> Turbopack (Rust asosidagi bundler) endi <code>next dev</code> uchun barqaror. U webpack'dan dev server ishga tushishi uchun 10 baravar tezroq. <strong>Next.js 16:</strong> Turbopack <code>next build</code> uchun ham barqaror.",
+            /* Phase 2 */
+            "<strong>Next.js 15:</strong> <code>params</code> endi asinxron (<code>Promise</code>). Qiymatlarga kirish uchun <code>await params</code> qilishingiz kerak. Next.js 14'da u oddiy obyekt edi.",
+            /* Phase 2 - Linking */
+            "<strong>Next.js 13+ o'zgarish:</strong> Navigatsiya hooklari <code>\"next/router\"</code> (Pages Router) dan <code>\"next/navigation\"</code> (App Router) ga ko'chirildi. API boshqacha — <code>useRouter()</code> endi <code>query</code> yoki <code>asPath</code> ga ega emas.",
+            /* Phase 2 - Metadata */
+            "<strong>Next.js 15 o'zgarish:</strong> <code>generateMetadata</code> dagi <code>params</code> endi <strong>Promise</strong> — <code>await</code> qilishingiz kerak. Next.js 14'da u oddiy obyekt edi.",
+            /* Phase 3 - Data fetching */
+            "<strong>Next.js 14 → 15 o'zgarish:</strong> <code>fetch</code> keshlash o'zgardi. Next.js 14'da <code>fetch()</code> sukut bo'yicha keshlangan (<code>force-cache</code>). <strong>Next.js 15</strong>'da <code>fetch()</code> <strong>sukut bo'yicha keshlanmaydi</strong> (<code>no-store</code>). Keshlashni aniq belgilashingiz kerak.",
+            /* Phase 3 - Caching */
+            "<strong>Next.js 15 o'zgarishlar:</strong> Sukut bo'yicha keshlash xulqi o'zgardi. <code>fetch()</code>, <code>GET</code> route handler'lar va klient router keshi endi <strong>sukut bo'yicha keshlanmaydi</strong>. Bu v14'dagi №1 dasturchi shikoyati edi.",
+            /* Phase 3 - Static/dynamic */
+            "<strong>Next.js 15 — Partial Prerendering (PPR):</strong> Bitta sahifada statik va dinamikni birlashtiradigan eksperimental xususiyat. Statik qobiq CDN'dan darhol beriladi va dinamik qismlar Suspense orqali oqib keladi. Bu Next.js renderingning kelajagi.",
+            /* Phase 3 - use() hook */
+            "<strong>React 19 / Next.js 15+:</strong> <code>use()</code> React 19'da barqaror API. U <code>throw promise</code> (eski Suspense mexanizmi) ni tozaroq, kompositsion API bilan almashtiradi. Promise Client komponentidan tashqarida (odatda Server komponentida) yaratilishi va prop sifatida uzatilishi kerak.",
+            /* Phase 4 - Server Actions */
+            "<strong>Next.js 14:</strong> Server Actions barqaror bo'ldi. Undan oldin (Next.js 13) ular eksperimental edi va konfiguratsiyada <code>experimental.serverActions: true</code> talab qilardi.",
+            /* Phase 4 - Forms */
+            "<strong>Next.js 15 / React 19:</strong> <code>useFormState</code> nomi <code>useActionState</code> ga o'zgartirildi va <code>\"react-dom\"</code> dan <code>\"react\"</code> ga ko'chirildi.",
+            /* Phase 5 - Route Handlers */
+            "<strong>Next.js 15:</strong> <code>GET</code> route handler'lar endi <strong>sukut bo'yicha keshlanmaydi</strong>. Next.js 14'da ular dinamik API'lar ishlatmasa statik deb hisoblanardi.",
+            /* Phase 5 - Cookies */
+            "<strong>Next.js 15 buziluvchi o'zgarish:</strong> <code>cookies()</code>, <code>headers()</code> va <code>searchParams</code> endi hammasi <strong>asinxron</strong> — <code>await</code> qilishingiz kerak. Next.js 14'da ular sinxron edi. Bu Server komponentlari, Server Actions va Route Handler'larda amal qiladi.",
+            /* Phase 9 - 15→16 */
+            "<strong>Migratsiya maslahati:</strong> Next.js 16'da 15'ga nisbatan kamroq buziluvchi o'zgarishlar bor. Asosiy yangilash yo'li — buildlar uchun Turbopack'ni yoqish va yangi keshlash API'larini qo'llash. Avtomatlashtirilgan migratsiya uchun <code>npx @next/codemod@latest upgrade</code> ni ishga tushiring."
+          ],
+          keyPoints: [
+            /* === Phase 1 === */
+            /* T1: What is Next.js (4) */
+            "Next.js = React + routing + SSR + API + optimallashtirishlar bitta freymvorkda",
+            "Vercel tomonidan yaratilgan va qo'llab-quvvatlanadi — yetakchi React deploy platformasi",
+            "Barcha yangi loyihalar uchun <strong>App Router</strong> ishlating (Pages Router eski)",
+            "Full-stack: bitta loyihada frontend VA backend kodni yozing",
+            /* T2: Project setup (4) */
+            "<code>npx create-next-app@latest</code> — standart loyiha scaffoldi",
+            "Yangi loyihalar uchun har doim TypeScript + App Router tanlang",
+            "Turbopack tezkor dev buildlar uchun webpack'ni almashtiradi",
+            "<code>npm run dev</code> dev serverni 3000-portda ishga tushiradi",
+            /* T3: Project structure (4) */
+            "Papkalar marshrutlarni belgilaydi, <code>page.tsx</code> ularni ochiq qiladi",
+            "<code>layout.tsx</code> sahifalarni o'rab turadi va navigatsiya bo'ylab holatni saqlaydi",
+            "Maxsus fayllar (<code>loading</code>, <code>error</code>, <code>not-found</code>) o'rnatilgan UX patternlarni beradi",
+            "<code>public/</code> papkasi statik resurslarni ildiz URL'da beradi",
+            /* T4: Pages & routing (4) */
+            "Papka = URL segmenti, <code>page.tsx</code> = marshrutni renderlashtiradi",
+            "Ichki papkalar avtomatik ichki URL'lar yaratadi",
+            "<code>layout.tsx</code> ildizda talab qilinadi; ichki layoutlar ixtiyoriy",
+            "Sahifalar sukut bo'yicha Server komponentlari — ular <code>async</code> bo'lishi mumkin",
+            /* T5: Linking (4) */
+            "<code>&lt;Link href=\"...\"&gt;</code> deklarativ, oldindan yuklangan navigatsiya uchun",
+            "<code>useRouter()</code> <code>\"next/navigation\"</code> dan programmatik navigatsiya uchun",
+            "<code>usePathname()</code> joriy yo'lni qaytaradi, <code>useSearchParams()</code> so'rovni qaytaradi",
+            "Havolalar sukut bo'yicha ko'rinadigan marshrutlarni oldindan yuklaydi",
+            /* T6: Metadata (4) */
+            "Statik metadata uchun <code>metadata</code> obyektini yoki dinamik uchun <code>generateMetadata()</code> ni eksport qiling",
+            "Layoutda <code>title.template</code> ishlating — bola sahifa sarlavhalarini avtomatik formatlash uchun",
+            "Open Graph, Twitter kartalar, ikonalar va robots hammasi qo'llab-quvvatlanadi",
+            "Metadata layoutlardan → sahifalarga avtomatik deduplikatsiya va birlashtiriladi",
+            /* === Phase 2 === */
+            /* T7: Dynamic routes (4) */
+            "<code>[id]</code> = bitta dinamik segment, <code>[...slug]</code> = catch-all, <code>[[...slug]]</code> = ixtiyoriy catch-all",
+            "Parametrlar har doim <strong>string</strong> — raqamlarni <code>Number(id)</code> bilan parse qiling",
+            "<code>generateStaticParams()</code> dinamik sahifalarni build vaqtida oldindan renderlaydi",
+            "Next.js 15+'da <code>params</code> Promise — har doim <code>await</code> qiling",
+            /* T8: Layouts (4) */
+            "Layout = navigatsiya bo'ylab saqlanadi (holatni saqlaydi), Template = har safar qayta mount bo'ladi",
+            "Layoutlar ichma-ich bo'lishi mumkin: root layout → dashboard layout → settings layout",
+            "Root layout talab qilinadi va <code>&lt;html&gt;</code> va <code>&lt;body&gt;</code> ni o'z ichiga olishi kerak",
+            "Layoutlar sukut bo'yicha Server komponentlari — to'g'ridan-to'g'ri ma'lumot olishi mumkin",
+            /* T9: Route groups (4) */
+            "<code>(papkaNomi)</code> — qavslar URL routingdan chiqadi",
+            "Mantiqiy guruhlash uchun ishlating: <code>(marketing)</code>, <code>(app)</code>, <code>(auth)</code>",
+            "Har bir guruh o'z layoutiga ega bo'lishi mumkin — turli sahifa qobiqlari uchun ajoyib",
+            "Papka tuzilmangizni keraksiz URL ichma-ichligi yaratmasdan toza saqlaydi",
+            /* T10: Parallel & intercepting (4) */
+            "Parallel marshrutlar (<code>@slot</code>) bitta layoutda bir vaqtda bir nechta sahifani renderlaydi",
+            "Intercepting marshrutlar kontentni kontekstda (modallar) to'liq navigatsiyasiz ko'rsatadi",
+            "Instagram uslubidagi rasm modal patterni — klassik foydalanish holati",
+            "Parallel slot mos marshrut topa olmasa, <code>default.tsx</code> ni zaxira sifatida ishlating",
+            /* T11: Loading & error (4) */
+            "<code>loading.tsx</code> = avtomatik Suspense chegarasi (yuklanayotganda skeleton ko'rsatadi)",
+            "<code>error.tsx</code> = avtomatik xato chegarasi (Client komponent bo'lishi shart)",
+            "<code>not-found.tsx</code> = maxsus 404 sahifa, <code>notFound()</code> funksiyasi bilan chaqiriladi",
+            "Bular segment bo'yicha skoplangan — har bir papka o'z yuklanish/xato UI'ga ega bo'lishi mumkin",
+            /* T12: Redirects (4) */
+            "<code>redirect()</code> vaqtinchalik (307), <code>permanentRedirect()</code> doimiy (308) uchun",
+            "<code>notFound()</code> eng yaqin <code>not-found.tsx</code> ni chaqiradi",
+            "Konfiguratsiya asosidagi qayta yo'naltirishlar sahifa yuklanishidan oldin edge'da ishlaydi",
+            "Rewrite'lar URL'larni foydalanuvchiga ko'rsatmasdan xaritalaydi (proksi pattern)",
+            /* === Phase 3 === */
+            /* T13: Server Components (4) */
+            "Server komponentlari sukut — direktiva kerak emas",
+            "Ular <code>async</code> bo'lishi va to'g'ridan-to'g'ri ma'lumotlar bazasi, fayl tizimi, sirlarga kirishi mumkin",
+            "Klientga nol JS yuboradi — faqat renderlangan HTML",
+            "Hooklar, event handlerlar yoki brauzer API'larini ishlata olmaydi",
+            /* T14: Client Components (4) */
+            "<code>\"use client\"</code> chegarani belgilaydi — u import qilgan hamma narsa ham klient bo'ladi",
+            "Server → Client'ga uzatilgan proplar serializatsiya qilinadigan bo'lishi kerak (funksiya/klasslar emas)",
+            "Client chegaralarini pastga suring: ko'p kodni serverda saqlang",
+            "Pattern: Server ma'lumot oladi → Client interaksiyani boshqaradi",
+            /* T15: Composition (5) */
+            "Client komponentlari Server komponentlarini <em>import</em> qila olmaydi — lekin ularni <code>children</code> sifatida qabul qilishi mumkin",
+            "\"Donut pattern\": Client wrapper ichida <code>children</code> orqali uzatilgan Server kontent",
+            "Client komponentlarini server renderlangan sahifalar ichidagi kichik interaktivlik \"orollari\" sifatida saqlang",
+            "Server → Client'ga oqayotgan proplar serializatsiya qilinadigan bo'lishi kerak (JSON-xavfsiz: funksiyalar, Date, Map yo'q)",
+            "Kontekst provayderlar Client komponentlari — ularni layout darajasida o'rab, sahifalarni <code>children</code> sifatida uzating",
+            /* T16: server-only (4) */
+            "Brauzerda hech qachon ishlamasligi kerak bo'lgan fayllarga <code>import \"server-only\"</code> qo'shing",
+            "Brauzer API'lari (localStorage, window) kerak bo'lgan fayllar uchun <code>import \"client-only\"</code>",
+            "Bular build vaqtidagi tekshiruvlar — xatolarni ishlab chiqarishga yetmasdan oldin ushlaydi",
+            "Ishlatish: ma'lumotlar bazasi so'rovlari, API kalit ishlatish, auth utilitalar va sirli har qanday fayl",
+            /* T17: Data fetching (4) */
+            "Ma'lumotlarni <code>async</code> Server komponentlarida to'g'ridan-to'g'ri oling — maxsus API'lar kerak emas",
+            "Parallel olish uchun <code>Promise.all()</code> ishlating — ketma-ket sharshara bo'lmasin",
+            "Next.js 15 fetch sukutlarini o'zgartirdi: siz yoqmaguningizcha keshlash yo'q",
+            "<code>{ next: { revalidate: N } }</code> = ISR (har N soniyada yangilash)",
+            /* T18: Caching (4) */
+            "So'rov memorizatsiyasi: bitta renderdagi bir xil fetch = bitta tarmoq chaqiruvi",
+            "Ma'lumot keshi: doimiy server keshi, <code>force-cache</code> yoki <code>revalidate</code> bilan yoqiladi",
+            "<code>revalidateTag()</code> afzal bekor qilish strategiyasi",
+            "Next.js 15 keshlashni ixtiyoriy qildi (majburiy emas) — katta xulq o'zgarishi",
+            /* T19: Streaming (4) */
+            "Sekin async komponentlarini <code>&lt;Suspense&gt;</code> ga fallback bilan o'rang",
+            "<code>loading.tsx</code> sahifa atrofidagi Suspense chegarasi uchun qisqartirilgan usul",
+            "Har bir Suspense chegarasi mustaqil oqadi — tez qismlar bloklanmaydi",
+            "Bu HTTP streaming — brauzer barcha ma'lumotlar tayyor bo'lishidan oldin renderlashni boshlaydi",
+            /* T20: Static vs dynamic (4) */
+            "Next.js statik va dinamikni avtomatik aniqlaydi — kamdan-kam sozlash kerak",
+            "<code>cookies()</code>, <code>headers()</code> yoki <code>searchParams</code> ishlatish marshrutni dinamik qiladi",
+            "ISR: <code>export const revalidate = N</code> statik sahifalarni davriy qayta generatsiya qiladi",
+            "PPR (Next.js 15+) statik qobiqlarni dinamik oqiladigan kontent bilan birlashtiradi",
+            /* T21: use() hook (4) */
+            "<code>use(promise)</code> Client komponent ichida Promise'ni ochadi — Suspense'ni ishga tushiradi",
+            "<code>use(context)</code> kontekstni o'qiydi va shartli chaqirilishi mumkin (<code>useContext</code> dan farqli)",
+            "Erta olishni boshlash uchun Server komponentlaridan → Client komponentlariga promise uzating",
+            "<code>use(promise)</code> ishlatadigan komponentlarni har doim <code>&lt;Suspense&gt;</code> chegarasiga o'rang",
+            /* === Phase 4 === */
+            /* T22: Server Actions (4) */
+            "<code>\"use server\"</code> funksiyalarni faqat serverda ishlash uchun belgilaydi — ular hech qachon brauzerda ishlamaydi",
+            "Ularni to'g'ridan-to'g'ri <code>&lt;form action={...}&gt;</code> ga uzating — JavaScriptsiz ishlaydi",
+            "Mutatsiyalardan keyin ma'lumotlarni yangilash uchun <code>revalidatePath()</code> yoki <code>revalidateTag()</code> chaqiring",
+            "Server Actions Next.js'da ma'lumotlarni o'zgartirish uchun tavsiya etilgan usul",
+            /* T23: Forms (4) */
+            "<code>useActionState(action, initialState)</code> forma holati + action bog'lashni boshqaradi",
+            "<code>useFormStatus()</code> <code>pending</code> holatini beradi — <code>&lt;form&gt;</code> ichida bo'lishi kerak",
+            "Serverda Zod bilan validatsiya qiling — xatolarni strukturalangan holat sifatida qaytaring",
+            "Formalar JS'siz ishlaydi (progressiv kengaytirish) — actionlar oddiy HTTP POST",
+            /* T24: Optimistic (4) */
+            "<code>useOptimistic(data, updateFn)</code> optimistik holat + setter qaytaradi",
+            "Server action'dan oldin tezkor javob uchun setter'ni chaqiring",
+            "Server action xato chiqarsa holat avtomatik qaytadi",
+            "React 19 xususiyati — Next.js 15+ Server Actions bilan nativ ishlaydi",
+            /* T25: useTransition (4) */
+            "<code>useTransition</code> formalardan tashqaridagi Server Action chaqiruvlarini o'raydi — <code>isPending</code> beradi",
+            "<code>startTransition</code> callback'i React 19'da <code>async</code> bo'lishi mumkin",
+            "UI'ni javob beruvchi saqlaydi — React transition paytida renderlashni blokirovka qilmaydi",
+            "Tezkor javob + kutish holati uchun <code>useOptimistic</code> bilan birlashtiring",
+            /* T26: Revalidation (4) */
+            "<code>revalidatePath(path)</code> ma'lum marshrutni yangilaydi",
+            "<code>revalidateTag(tag)</code> shu tegdagi barcha fetchlarni yangilaydi — aniqroq",
+            "Yaratish/yangilash/o'chirish operatsiyalaridan keyin Server Actions'da chaqiring",
+            "Teglar bir vaqtda bir nechta sahifadagi bog'liq ma'lumotlarni bekor qilishga imkon beradi",
+            /* T27: File uploads (3) */
+            "FormData'dagi fayllar <code>File</code> obyektlari sifatida keladi — server ishlatishi uchun <code>Buffer</code>'ga aylantiring",
+            "<code>next.config.ts</code>'da tana hajmi cheklovlarini belgilang: <code>experimental.serverActions.bodySizeLimit</code>",
+            "Ishlab chiqarish uchun bulutli xotiraga (S3, Cloudflare R2) yuklang, lokal diskka emas",
+            /* T28: Security (4) */
+            "Server Actions ochiq endpointlar — har doim autentifikatsiya va avtorizatsiya qiling",
+            "Next.js shifrlangan action ID'lar orqali o'rnatilgan CSRF himoyasini beradi",
+            "Barcha kirishlarni serverda validatsiya qiling (Zod) — klient ma'lumotlariga hech qachon ishonmang",
+            "Closure'larni ehtiyotkorlik bilan ishlating — olingan o'zgaruvchilar klientga yuboriladi",
+            /* === Phase 5 === */
+            /* T29: Route Handlers (3) */
+            "<code>route.ts</code> dan <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code> eksport qiling",
+            "JSON javoblar uchun <code>NextResponse.json()</code> ishlating",
+            "Mutatsiyalar uchun Server Actions'ni afzal ko'ring; tashqi API/webhooklar uchun route handler'lar",
+            /* T30: Middleware (4) */
+            "Loyiha uchun bitta <code>middleware.ts</code> — Edge runtime'da ishlaydi",
+            "Qaysi marshrutlar middleware'ni ishga tushirishini cheklash uchun <code>matcher</code> ishlating",
+            "Keng tarqalgan foydalanish: auth qayta yo'naltirish, A/B testlash, tilni aniqlash, tezlik cheklash",
+            "Middleware ma'lumotlar bazasi yoki Node.js API'lariga kira olmaydi (faqat Edge)",
+            /* T31: Cookies & Headers (5) */
+            "<code>cookies()</code> HTTP cookie'larni o'qiydi/yozadi — <code>get()</code>, <code>set()</code>, <code>delete()</code>, <code>has()</code>",
+            "<code>headers()</code> faqat o'qish — kiruvchi so'rov headerlarini qaytaradi",
+            "Ikkalasi ham <strong>Next.js 15+'da asinxron</strong> — har doim <code>await</code> qiling",
+            "Ulardan birini ishlatish marshrutni dinamik qiladi (har bir so'rovda renderlanadi, keshlanmaydi)",
+            "Cookie'larni faqat Server Actions, Route Handler'lar yoki Middleware'da <em>o'rnatish</em> mumkin — Server komponentlarida emas",
+            /* T32: Auth (4) */
+            "Auth.js v5 App Router bilan ishlaydi — Server komponentlarida <code>auth()</code>",
+            "Marshrut darajasida himoya uchun sessiyalarni middleware'da tekshiring",
+            "50+ OAuth provayderini qo'llab-quvvatlaydi (Google, GitHub, Discord va boshq.)",
+            "Auth oqimlari uchun <code>signIn()</code> va <code>signOut()</code> Server Actions'ni ishlating",
+            /* T33: Database (4) */
+            "Dev'da bir nechta DB ulanishlarini yaratmaslik uchun singleton patterndan foydalaning",
+            "Server komponentlarida to'g'ridan-to'g'ri so'rov qiling — API qatlami kerak emas",
+            "Serverless (Vercel) uchun ulanish pooling ishlating (Prisma Accelerate, Neon, PlanetScale)",
+            "Client komponentlarida hech qachon ma'lumotlar bazasi kodini import qilmang",
+            /* T34: Env vars (4) */
+            "<code>NEXT_PUBLIC_</code> prefiksi = brauzerda mavjud (sirlar bilan ehtiyot bo'ling!)",
+            "Prefikssiz = faqat server (API kalitlari, ma'lumotlar bazasi URL'lari uchun xavfsiz)",
+            "Yuklash tartibi: <code>.env</code> → <code>.env.local</code> → <code>.env.development</code>/<code>.env.production</code>",
+            "<code>.env</code> fayllarini o'zgartirgandan keyin dev serverni qayta ishga tushiring",
+            /* T35: Streaming (4) */
+            "Streaming javoblar uchun <code>ReadableStream</code> ishlating (SSE, AI chat, real-time ma'lumot)",
+            "Webhook handler'lar hodisalarni qayta ishlashdan oldin imzolarni tekshirishi kerak",
+            "CORS preflight so'rovlari uchun <code>OPTIONS</code> handler eksport qiling",
+            "Route Handler'lar standart Web API'larini (<code>Request</code>, <code>Response</code>) ishlatadi — Edge va Node'da bir xil ishlaydi",
+            /* T36: Edge vs Node (4) */
+            "Node.js runtime = sukut, to'liq API kirish, ko'p holatlar uchun yaxshi",
+            "Edge runtime = tezroq, global, lekin cheklangan (fs yo'q, nativ modullar yo'q)",
+            "Middleware har doim Edge'da ishlaydi",
+            "Oddiy auth tekshiruvlari, qayta yo'naltirishlar, A/B testlar uchun Edge; DB so'rovlari uchun Node ishlating",
+            /* === Phase 6 === */
+            /* T37: CSS Modules & Tailwind (4) */
+            "CSS Modules: <code>*.module.css</code> — klass nomlari avtomatik skoplanadi",
+            "Tailwind: <code>create-next-app</code> tomonidan sozlanadi — utility klasslar, CSS fayllar yo'q",
+            "Global CSS <code>app/globals.css</code>'da, root layoutda import qilinadi",
+            "Ikkalasi ham Server va Client komponentlari bilan ishlaydi",
+            /* T38: next/font (3) */
+            "Google Fonts build vaqtida o'z serveriga joylashtiriladi — tashqi so'rovlar yo'q",
+            "Avtomatik <code>font-display: swap</code> va <code>size-adjust</code> — nol layout siljish",
+            "Tailwind uchun CSS variable rejimini ishlating: <code>Inter({ variable: \"--font-inter\" })</code>",
+            /* T39: next/image (4) */
+            "Avtomatik optimallashtirish uchun har doim <code>&lt;img&gt;</code> o'rniga <code>&lt;Image&gt;</code> ishlating",
+            "Sahifaning yuqori qismidagi rasmlarga <code>priority</code> qo'shing (LCP optimallashtirish)",
+            "Ota konteynerini to'ldiradigan rasmlar uchun <code>fill</code> propni ishlating",
+            "Tashqi rasm domenlari uchun <code>next.config.ts</code>'da <code>remotePatterns</code> sozlang",
+            /* T40: next/script (4) */
+            "<code>afterInteractive</code> (sukut) — sahifa interaktiv bo'lgandan keyin yuklanadi",
+            "<code>lazyOnload</code> — bo'sh vaqtda yuklanadi (eng past ustunlik)",
+            "<code>beforeInteractive</code> — gidratsiyadan oldin yuklanadi (kam ishlating)",
+            "Uchinchi tomon skriptlarning sahifa yuklanishini bloklab qo'yishini oldini oladi",
+            /* T41: Theming (3) */
+            "<code>next-themes</code> qorong'i rejimni yuklashda nol miltillash bilan boshqaradi",
+            "Tailwind'ning <code>dark:</code> varianti uchun <code>attribute=\"class\"</code> ishlating",
+            "Tizim sozlamalari aniqlashni avtomatik qo'llab-quvvatlaydi",
+            /* T42: Component libs (4) */
+            "shadcn/ui komponentlarni <code>components/ui/</code> ga ko'chiradi — kod sizniki",
+            "Radix UI primitivlari ustiga qurilgan — to'liq accessible, stilsiz headless komponentlar",
+            "Server komponentlari bilan mukammal ishlaydi (ko'pchiligi tabiatan faqat klient)",
+            "Muqobil: oddiyroq ehtiyojlar uchun Headless UI (Tailwind Labs tomonidan)",
+            /* === Phase 7 === */
+            /* T43: Code splitting (4) */
+            "Marshrutlar avtomatik bo'linadi — har bir sahifa faqat o'z JS'ini yuklaydi",
+            "Komponent darajasida lazy loading uchun <code>next/dynamic</code>",
+            "Faqat brauzer kutubxonalari (xaritalar, editorlar, grafiklar) uchun <code>ssr: false</code> ishlating",
+            "Lazy load paytida yaxshi UX uchun <code>loading</code> fallback qo'shing",
+            /* T44: Bundle analysis (4) */
+            "Bundle'ingizni vizualizatsiya qilish uchun <code>ANALYZE=true npm run build</code> ishga tushiring",
+            "Server komponentlari nol JS yuboradi — iloji boricha kodni klientdan olib tashlang",
+            "Tree-shaking uchun aniq importlar ishlating: <code>import { x } from \"lib\"</code>",
+            "Darhol kerak bo'lmagan katta komponentlarni lazy load qiling",
+            /* T45: SEO (4) */
+            "<code>sitemap.ts</code> va <code>robots.ts</code> standart URL'larda avtomatik beriladi",
+            "Dinamik sarlavhalar va Open Graph ma'lumotlari uchun <code>generateMetadata()</code> ishlating",
+            "<code>&lt;script type=\"application/ld+json\"&gt;</code> bilan JSON-LD strukturalangan ma'lumot qo'shing",
+            "Server tomonida renderlangan sahifalar to'liq indekslanadi — SEO uchun ajoyib",
+            /* T46: i18n (4) */
+            "Bir nechta tilni boshqarish uchun ildiz sifatida <code>[locale]</code> dinamik segmentdan foydalaning",
+            "Middleware <code>Accept-Language</code> headerlaridan foydalanuvchi tilini aniqlaydi",
+            "Mashhur kutubxonalar: <code>next-intl</code>, <code>i18next</code>, <code>react-i18next</code>",
+            "Pages Router'da o'rnatilgan <code>i18n</code> konfiguratsiya bor edi; App Router middleware patternidan foydalanadi",
+            /* T47: Testing (4) */
+            "Vitest + Testing Library unit/komponent testlari uchun (tezkor, zamonaviy)",
+            "Playwright E2E testlar uchun (haqiqiy brauzer, to'liq foydalanuvchi oqimi)",
+            "Unit testlarda Server komponentlari va Server Actions'ni mocklang",
+            "Next.js Vitest va Playwright sozlashi uchun rasmiy hujjatlarga ega",
+            /* T48: Core Web Vitals (4) */
+            "LCP: eng katta ko'rinadigan element yuklanish vaqtini optimallashtiring (rasmlar, matn)",
+            "INP (FID o'rniga): sahifa interaksiyalarga qanchalik tez javob berishi",
+            "CLS: o'lchamlangan rasmlar va barqaror shriftlar bilan layout siljishlarini oldini oling",
+            "Next.js Image, Font va Server komponentlari sukut bo'yicha uchalasiga yordam beradi",
+            /* === Phase 8 === */
+            /* T49: Vercel (4) */
+            "Nol konfiguratsiyali deploy — Vercel Next.js'ni avtomatik aniqlaydi va optimallashtiradi",
+            "Har bir PR ulashilishi mumkin bo'lgan URL bilan preview deploy oladi",
+            "O'rnatilgan analitika, tezlik ko'rsatkichlari va Edge tarmog'i",
+            "Muhit o'zgaruvchilari Vercel dashboardida sozlanadi",
+            /* T50: Self-hosting (4) */
+            "<code>output: \"standalone\"</code> minimal, mustaqil build yaratadi",
+            "Docker ko'p bosqichli buildlar rasmni kichik saqlaydi (~100MB)",
+            "Standalone server yoniga <code>.next/static</code> va <code>public/</code> ni ko'chiring",
+            "Har qanday bulutda ishlaydi: AWS, GCP, Azure, DigitalOcean, Railway",
+            /* T51: Static export (4) */
+            "<code>output: \"export\"</code> <code>/out</code> katalogida sof statik HTML yaratadi",
+            "Har qanday CDN yoki statik hostga deploy qiling — Node.js server kerak emas",
+            "Server xususiyatlari mavjud emas — faqat klient tomonida rendering",
+            "Hujjatlar saytlari, landing sahifalar, bloglar uchun yaxshi",
+            /* T52: CI/CD (4) */
+            "Har bir push va PR'da lint → build → test ishga tushiring",
+            "Vercel Git'dan avtomatik deploy qiladi — CI sifat tekshiruvlariga e'tibor qaratadi",
+            "Tezroq buildlar uchun <code>node_modules</code> va <code>.next/cache</code> ni keshlang",
+            "Preview deploylarga qarshi E2E testlar uchun Playwright ishlating",
+            /* T53: Monitoring (4) */
+            "Vercel Analytics: sahifa ko'rishlari, Web Vitals, auditoriya ma'lumotlari (bepul tarif)",
+            "Speed Insights: marshrut bo'yicha haqiqiy foydalanuvchi samaradorlik ma'lumotlari",
+            "Sentry: xatolarni kuzatish, samaradorlik monitoringi, sessiya qaytarish",
+            "Server tomonida monitoring sozlash uchun <code>instrumentation.ts</code> ishlating",
+            /* T54: Security (4) */
+            "Xavfsizlik headerlarini <code>next.config.ts</code>'da belgilang — barcha marshrutlarga qo'llanadi",
+            "Server komponentlari sirlarni oshkor qilmaydi — lekin barcha Server Action kirishlarini validatsiya qiling",
+            "<code>NEXT_PUBLIC_</code> ni ehtiyotkorlik bilan ishlating — shu prefiksli har narsa brauzerda",
+            "API himoyasi uchun middleware yoki route handler'larda tezlik cheklashni amalga oshiring",
+            /* === Phase 9 === */
+            /* T55: Pages vs App Router (4) */
+            "Pages Router: <code>pages/</code> katalogi, <code>getServerSideProps</code>/<code>getStaticProps</code>",
+            "App Router: <code>app/</code> katalogi, Server komponentlari, <code>async</code> komponentlar",
+            "App Router qo'shadi: layoutlar, yuklanish/xato UI, streaming, Server Actions",
+            "Ikkalasi birga mavjud bo'lishi mumkin — bosqichma-bosqich migratsiya qiling",
+            /* T56: 12→13 (4) */
+            "App Router taqdim etildi — Next.js'dagi eng katta arxitektura o'zgarishi",
+            "Server komponentlari sukut bo'yicha rendering modeli bo'ldi",
+            "Turbopack webpack'ni almashtiruvchi sifatida e'lon qilindi (alpha)",
+            "<code>&lt;Link&gt;</code> soddalashtirildi — ichki <code>&lt;a&gt;</code> teg endi kerak emas",
+            /* T57: 13→14 (4) */
+            "Server Actions eksperimentaldan barqarorga o'tdi — asosiy yangilik",
+            "Turbopack ancha tezlashdi, lekin hali faqat dev uchun edi",
+            "PPR preview sifatida taqdim etildi — statik va dinamik renderingni birlashtirish",
+            "Fetch keshlash sukut bo'yicha aggressiv edi — bu chalkashlik tug'dirdi va v15'da o'zgartirildi",
+            /* T58: 14→15 (4) */
+            "<code>params</code>, <code>searchParams</code>, <code>cookies()</code>, <code>headers()</code> endi hammasi asinxron — <code>await</code> qilish kerak",
+            "Keshlash ixtiyoriy, majburiy emas — v14'dagi №1 shikoyat hal qilindi",
+            "React 19: <code>useActionState</code>, <code>useOptimistic</code>, <code>use()</code> hook, ref prop sifatida",
+            "Turbopack dasturlash uchun barqaror — webpack'dan sezilarli tezroq",
+            /* T59: 15→16 (5) */
+            "Turbopack endi ham <code>dev</code>, ham <code>build</code> uchun barqaror — webpack davri tugamoqda",
+            "PPR etilmoqda — Next.js uchun kelajakdagi sukut rendering strategiyasi",
+            "<code>'use cache'</code> direktivasi intuitiv, nozik keshlash boshqaruvini beradi",
+            "React Compiler avtomatik memorizatsiya qiladi — qo'shimcha kod kamayadi",
+            "Versiyalar orasida avtomatlashtirilgan yangilanishlar uchun codemod vositasini ishlating",
+            /* T60: Migration (4) */
+            "Har doim <code>npx @next/codemod@latest upgrade</code> ishlating — ko'p o'zgarishlarni avtomatlashtiradi",
+            "Pages Router → App Router: bir vaqtda bitta sahifani migratsiya qiling, ikkalasi birga mavjud",
+            "Yangilagandan keyin sinchiklab test qiling — ayniqsa keshlash xulqini",
+            "Har bir versiyaning o'ziga xos o'zgarishlari uchun rasmiy yangilash qo'llanmasini o'qing"
+          ]
+        };
+
+        /* ── Translation engine ── */
+        function collectElements() {
+          return {
+            themeLabel: document.getElementById("themeLabel"),
+            phaseTitles: document.querySelectorAll(".phase-title"),
+            phaseTags: document.querySelectorAll(".phase-tag"),
+            topicNames: document.querySelectorAll(".topic-name"),
+            topicDescs: document.querySelectorAll(".topic-desc"),
+            h3s: document.querySelectorAll(".topic-content h3"),
+            keyH4s: document.querySelectorAll(".key-points h4"),
+            keyLis: document.querySelectorAll(".key-points li"),
+            versionNotes: document.querySelectorAll(".version-note"),
+            paragraphs: document.querySelectorAll(".topic-content > p, .topic-content-inner > p")
+          };
+        }
+
+        function cacheEnglish(key, el) {
+          if (!enCache[key]) enCache[key] = el.innerHTML;
+        }
+
+        function cacheAll(els, prefix) {
+          for (var i = 0; i < els.length; i++) {
+            cacheEnglish(prefix + i, els[i]);
+          }
+        }
+
+        function applyArr(els, arr, prefix) {
+          for (var i = 0; i < els.length && i < arr.length; i++) {
+            cacheEnglish(prefix + i, els[i]);
+            els[i].innerHTML = arr[i];
+          }
+        }
+
+        function restoreArr(els, prefix) {
+          for (var i = 0; i < els.length; i++) {
+            var cached = enCache[prefix + i];
+            if (cached !== undefined) els[i].innerHTML = cached;
+          }
+        }
+
+        function switchLang(lang) {
+          if (lang === currentLang) return;
+          currentLang = lang;
+
+          var els = collectElements();
+
+          if (lang === "uz") {
+            /* Cache and apply */
+            cacheEnglish("title", { innerHTML: document.title });
+            document.title = uz.pageTitle;
+            document.documentElement.lang = "uz";
+
+            cacheEnglish("themeLabel", els.themeLabel);
+            els.themeLabel.innerHTML = uz.themeLabel;
+
+            applyArr(els.phaseTitles, uz.phaseTitles, "pt");
+            applyArr(els.phaseTags, uz.phaseTags, "ptag");
+            applyArr(els.topicNames, uz.topicNames, "tn");
+            applyArr(els.topicDescs, uz.topicDescs, "td");
+            applyArr(els.h3s, uz.h3s, "h3");
+            applyArr(els.versionNotes, uz.versionNotes, "vn");
+
+            /* Key points titles */
+            for (var k = 0; k < els.keyH4s.length; k++) {
+              cacheEnglish("kh" + k, els.keyH4s[k]);
+              els.keyH4s[k].innerHTML = uz.keyPointsTitle;
+            }
+
+            /* Key points items */
+            applyArr(els.keyLis, uz.keyPoints, "kl");
+
+            /* Paragraphs */
+            applyArr(els.paragraphs, uz.paragraphs, "p");
+          } else {
+            /* Restore English */
+            var titleC = enCache["title"];
+            if (titleC) document.title = titleC;
+            document.documentElement.lang = "en";
+
+            var labelC = enCache["themeLabel"];
+            if (labelC) els.themeLabel.innerHTML = labelC;
+
+            restoreArr(els.phaseTitles, "pt");
+            restoreArr(els.phaseTags, "ptag");
+            restoreArr(els.topicNames, "tn");
+            restoreArr(els.topicDescs, "td");
+            restoreArr(els.h3s, "h3");
+            restoreArr(els.versionNotes, "vn");
+            restoreArr(els.keyH4s, "kh");
+            restoreArr(els.keyLis, "kl");
+            restoreArr(els.paragraphs, "p");
+          }
+
+          try { localStorage.setItem("nextjs-course-lang", lang); } catch(ex){}
+        }
+
+        /* ── Toggle button handler ── */
+        var langToggle = document.getElementById("langToggle");
+        if (langToggle) {
+          langToggle.addEventListener("click", function(e) {
+            var btn = e.target.closest ? e.target.closest(".lang-btn") : null;
+            if (!btn) return;
+            var lang = btn.getAttribute("data-lang");
+            var btns = langToggle.querySelectorAll(".lang-btn");
+            for (var i = 0; i < btns.length; i++) btns[i].classList.remove("active");
+            btn.classList.add("active");
+            switchLang(lang);
+          }, false);
+        }
+
+        /* ── Restore saved language ── */
+        try {
+          var savedLang = localStorage.getItem("nextjs-course-lang");
+          if (savedLang === "uz") {
+            var uzBtn = langToggle ? langToggle.querySelector('[data-lang="uz"]') : null;
+            var enBtn = langToggle ? langToggle.querySelector('[data-lang="en"]') : null;
+            if (uzBtn) { uzBtn.classList.add("active"); }
+            if (enBtn) { enBtn.classList.remove("active"); }
+            switchLang("uz");
+          }
+        } catch(ex){}
       })();
     </script>
   </body>
