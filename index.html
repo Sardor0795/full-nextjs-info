@@ -161,7 +161,9 @@
         border-radius: 20px;
         overflow: hidden;
         background: var(--rm-bg-tertiary);
-        transition: border-color 0.3s, background 0.3s;
+        transition:
+          border-color 0.3s,
+          background 0.3s;
         flex-shrink: 0;
         margin-right: auto;
       }
@@ -173,7 +175,9 @@
         background: transparent;
         color: var(--rm-text-tertiary);
         cursor: pointer;
-        transition: background 0.25s, color 0.25s;
+        transition:
+          background 0.25s,
+          color 0.25s;
         line-height: 1.4;
         font-family: inherit;
       }
@@ -305,7 +309,7 @@
       .topic-header {
         display: flex;
         align-items: center;
-        gap: 10px;
+        justify-content: space-between;
       }
       .topic-name {
         font-size: 15px;
@@ -639,8 +643,6 @@
         .phase-tag {
           font-size: 11px;
           padding: 2px 8px;
-          order: 4;
-          margin-left: 36px;
           margin-top: -4px;
         }
         .chevron {
@@ -5093,11 +5095,18 @@ npm install next@latest react@latest react-dom@latest
             "Stillar va resurslar",
             "Samaradorlik va ishlab chiqarish",
             "Deploy va DevOps",
-            "Versiyalar evolyutsiyasi va yangiliklar"
+            "Versiyalar evolyutsiyasi va yangiliklar",
           ],
           phaseTags: [
-            "1-hafta", "2–3-hafta", "3–4-hafta", "5-hafta", "6-hafta",
-            "7-hafta", "8-hafta", "9-hafta", "10-hafta"
+            "1-hafta",
+            "2–3-hafta",
+            "3–4-hafta",
+            "5-hafta",
+            "6-hafta",
+            "7-hafta",
+            "8-hafta",
+            "9-hafta",
+            "10-hafta",
           ],
           topicNames: [
             /* Phase 1 */
@@ -5168,7 +5177,7 @@ npm install next@latest react@latest react-dom@latest
             "Next.js 13 → 14",
             "Next.js 14 → 15",
             "Next.js 15 → 16",
-            "Migratsiya qo'llanmasi"
+            "Migratsiya qo'llanmasi",
           ],
           topicDescs: [
             /* Phase 1 */
@@ -5187,7 +5196,7 @@ npm install next@latest react@latest react-dom@latest
             "redirect(), permanentRedirect(), next.config",
             /* Phase 3 */
             "RSC, async komponentlar, klientda nol JS",
-            "\"use client\", interaktivlik, hooklar, chegaralar",
+            '"use client", interaktivlik, hooklar, chegaralar',
             "Server + Client chegaralari, children pattern, aralashma",
             "Chegaralar bo'ylab tasodifiy kod oqishini oldini olish",
             "fetch, async komponentlar, parallel olish",
@@ -5229,7 +5238,7 @@ npm install next@latest react@latest react-dom@latest
             /* Phase 8 */
             "Git integratsiya, preview deploylar, analitika",
             "Docker, Node.js server, standalone chiqish",
-            "output: \"export\", statik HTML, CDN hosting",
+            'output: "export", statik HTML, CDN hosting',
             "GitHub Actions, avtomatlashtirilgan testlar, preview deploylar",
             "Vercel Analytics, Sentry, loglar",
             "Headerlar, CSP, CORS, tezlik cheklash",
@@ -5239,7 +5248,7 @@ npm install next@latest react@latest react-dom@latest
             "Server Actions barqaror, Turbopack yaxshilanishlari",
             "React 19, asinxron API'lar, keshlash o'zgarishlari",
             "Turbopack buildlar, yangi funksiyalar, React yaxshilanishlari",
-            "Qadam-baqadam yangilash yo'li, codemodlar"
+            "Qadam-baqadam yangilash yo'li, codemodlar",
           ],
           h3s: [
             /* Phase 1 */
@@ -5310,7 +5319,7 @@ npm install next@latest react@latest react-dom@latest
             "Next.js 13 → 14: Server Actions barqarorlashdi",
             "Next.js 14 → 15: katta o'zgarishlar va React 19",
             "Next.js 16: yangiliklar",
-            "Migratsiya qo'llanmasi"
+            "Migratsiya qo'llanmasi",
           ],
           keyPointsTitle: "Asosiy xulosalar",
           paragraphs: [
@@ -5454,7 +5463,7 @@ npm install next@latest react@latest react-dom@latest
             /* T59: 15→16 */
             "Next.js 16 <strong>ishlab chiqarishga tayyor Turbopack</strong>, yaxshilangan rendering va dasturchi tajribasiga e'tibor qaratadi.",
             /* T60: Migration */
-            "Next.js asosiy versiyalar orasida yangilashga yordam beruvchi avtomatlashtirilgan codemodlarni beradi."
+            "Next.js asosiy versiyalar orasida yangilashga yordam beruvchi avtomatlashtirilgan codemodlarni beradi.",
           ],
           versionNotes: [
             /* Phase 1 */
@@ -5463,7 +5472,7 @@ npm install next@latest react@latest react-dom@latest
             /* Phase 2 */
             "<strong>Next.js 15:</strong> <code>params</code> endi asinxron (<code>Promise</code>). Qiymatlarga kirish uchun <code>await params</code> qilishingiz kerak. Next.js 14'da u oddiy obyekt edi.",
             /* Phase 2 - Linking */
-            "<strong>Next.js 13+ o'zgarish:</strong> Navigatsiya hooklari <code>\"next/router\"</code> (Pages Router) dan <code>\"next/navigation\"</code> (App Router) ga ko'chirildi. API boshqacha — <code>useRouter()</code> endi <code>query</code> yoki <code>asPath</code> ga ega emas.",
+            '<strong>Next.js 13+ o\'zgarish:</strong> Navigatsiya hooklari <code>"next/router"</code> (Pages Router) dan <code>"next/navigation"</code> (App Router) ga ko\'chirildi. API boshqacha — <code>useRouter()</code> endi <code>query</code> yoki <code>asPath</code> ga ega emas.',
             /* Phase 2 - Metadata */
             "<strong>Next.js 15 o'zgarish:</strong> <code>generateMetadata</code> dagi <code>params</code> endi <strong>Promise</strong> — <code>await</code> qilishingiz kerak. Next.js 14'da u oddiy obyekt edi.",
             /* Phase 3 - Data fetching */
@@ -5477,13 +5486,13 @@ npm install next@latest react@latest react-dom@latest
             /* Phase 4 - Server Actions */
             "<strong>Next.js 14:</strong> Server Actions barqaror bo'ldi. Undan oldin (Next.js 13) ular eksperimental edi va konfiguratsiyada <code>experimental.serverActions: true</code> talab qilardi.",
             /* Phase 4 - Forms */
-            "<strong>Next.js 15 / React 19:</strong> <code>useFormState</code> nomi <code>useActionState</code> ga o'zgartirildi va <code>\"react-dom\"</code> dan <code>\"react\"</code> ga ko'chirildi.",
+            '<strong>Next.js 15 / React 19:</strong> <code>useFormState</code> nomi <code>useActionState</code> ga o\'zgartirildi va <code>"react-dom"</code> dan <code>"react"</code> ga ko\'chirildi.',
             /* Phase 5 - Route Handlers */
             "<strong>Next.js 15:</strong> <code>GET</code> route handler'lar endi <strong>sukut bo'yicha keshlanmaydi</strong>. Next.js 14'da ular dinamik API'lar ishlatmasa statik deb hisoblanardi.",
             /* Phase 5 - Cookies */
             "<strong>Next.js 15 buziluvchi o'zgarish:</strong> <code>cookies()</code>, <code>headers()</code> va <code>searchParams</code> endi hammasi <strong>asinxron</strong> — <code>await</code> qilishingiz kerak. Next.js 14'da ular sinxron edi. Bu Server komponentlari, Server Actions va Route Handler'larda amal qiladi.",
             /* Phase 9 - 15→16 */
-            "<strong>Migratsiya maslahati:</strong> Next.js 16'da 15'ga nisbatan kamroq buziluvchi o'zgarishlar bor. Asosiy yangilash yo'li — buildlar uchun Turbopack'ni yoqish va yangi keshlash API'larini qo'llash. Avtomatlashtirilgan migratsiya uchun <code>npx @next/codemod@latest upgrade</code> ni ishga tushiring."
+            "<strong>Migratsiya maslahati:</strong> Next.js 16'da 15'ga nisbatan kamroq buziluvchi o'zgarishlar bor. Asosiy yangilash yo'li — buildlar uchun Turbopack'ni yoqish va yangi keshlash API'larini qo'llash. Avtomatlashtirilgan migratsiya uchun <code>npx @next/codemod@latest upgrade</code> ni ishga tushiring.",
           ],
           keyPoints: [
             /* === Phase 1 === */
@@ -5508,8 +5517,8 @@ npm install next@latest react@latest react-dom@latest
             "<code>layout.tsx</code> ildizda talab qilinadi; ichki layoutlar ixtiyoriy",
             "Sahifalar sukut bo'yicha Server komponentlari — ular <code>async</code> bo'lishi mumkin",
             /* T5: Linking (4) */
-            "<code>&lt;Link href=\"...\"&gt;</code> deklarativ, oldindan yuklangan navigatsiya uchun",
-            "<code>useRouter()</code> <code>\"next/navigation\"</code> dan programmatik navigatsiya uchun",
+            '<code>&lt;Link href="..."&gt;</code> deklarativ, oldindan yuklangan navigatsiya uchun',
+            '<code>useRouter()</code> <code>"next/navigation"</code> dan programmatik navigatsiya uchun',
             "<code>usePathname()</code> joriy yo'lni qaytaradi, <code>useSearchParams()</code> so'rovni qaytaradi",
             "Havolalar sukut bo'yicha ko'rinadigan marshrutlarni oldindan yuklaydi",
             /* T6: Metadata (4) */
@@ -5555,14 +5564,14 @@ npm install next@latest react@latest react-dom@latest
             "Klientga nol JS yuboradi — faqat renderlangan HTML",
             "Hooklar, event handlerlar yoki brauzer API'larini ishlata olmaydi",
             /* T14: Client Components (4) */
-            "<code>\"use client\"</code> chegarani belgilaydi — u import qilgan hamma narsa ham klient bo'ladi",
+            '<code>"use client"</code> chegarani belgilaydi — u import qilgan hamma narsa ham klient bo\'ladi',
             "Server → Client'ga uzatilgan proplar serializatsiya qilinadigan bo'lishi kerak (funksiya/klasslar emas)",
             "Client chegaralarini pastga suring: ko'p kodni serverda saqlang",
             "Pattern: Server ma'lumot oladi → Client interaksiyani boshqaradi",
             /* T15: Composition (5) */
             "Client komponentlari Server komponentlarini <em>import</em> qila olmaydi — lekin ularni <code>children</code> sifatida qabul qilishi mumkin",
-            "\"Donut pattern\": Client wrapper ichida <code>children</code> orqali uzatilgan Server kontent",
-            "Client komponentlarini server renderlangan sahifalar ichidagi kichik interaktivlik \"orollari\" sifatida saqlang",
+            '"Donut pattern": Client wrapper ichida <code>children</code> orqali uzatilgan Server kontent',
+            'Client komponentlarini server renderlangan sahifalar ichidagi kichik interaktivlik "orollari" sifatida saqlang',
             "Server → Client'ga oqayotgan proplar serializatsiya qilinadigan bo'lishi kerak (JSON-xavfsiz: funksiyalar, Date, Map yo'q)",
             "Kontekst provayderlar Client komponentlari — ularni layout darajasida o'rab, sahifalarni <code>children</code> sifatida uzating",
             /* T16: server-only (4) */
@@ -5597,7 +5606,7 @@ npm install next@latest react@latest react-dom@latest
             "<code>use(promise)</code> ishlatadigan komponentlarni har doim <code>&lt;Suspense&gt;</code> chegarasiga o'rang",
             /* === Phase 4 === */
             /* T22: Server Actions (4) */
-            "<code>\"use server\"</code> funksiyalarni faqat serverda ishlash uchun belgilaydi — ular hech qachon brauzerda ishlamaydi",
+            '<code>"use server"</code> funksiyalarni faqat serverda ishlash uchun belgilaydi — ular hech qachon brauzerda ishlamaydi',
             "Ularni to'g'ridan-to'g'ri <code>&lt;form action={...}&gt;</code> ga uzating — JavaScriptsiz ishlaydi",
             "Mutatsiyalardan keyin ma'lumotlarni yangilash uchun <code>revalidatePath()</code> yoki <code>revalidateTag()</code> chaqiring",
             "Server Actions Next.js'da ma'lumotlarni o'zgartirish uchun tavsiya etilgan usul",
@@ -5680,7 +5689,7 @@ npm install next@latest react@latest react-dom@latest
             /* T38: next/font (3) */
             "Google Fonts build vaqtida o'z serveriga joylashtiriladi — tashqi so'rovlar yo'q",
             "Avtomatik <code>font-display: swap</code> va <code>size-adjust</code> — nol layout siljish",
-            "Tailwind uchun CSS variable rejimini ishlating: <code>Inter({ variable: \"--font-inter\" })</code>",
+            'Tailwind uchun CSS variable rejimini ishlating: <code>Inter({ variable: "--font-inter" })</code>',
             /* T39: next/image (4) */
             "Avtomatik optimallashtirish uchun har doim <code>&lt;img&gt;</code> o'rniga <code>&lt;Image&gt;</code> ishlating",
             "Sahifaning yuqori qismidagi rasmlarga <code>priority</code> qo'shing (LCP optimallashtirish)",
@@ -5693,7 +5702,7 @@ npm install next@latest react@latest react-dom@latest
             "Uchinchi tomon skriptlarning sahifa yuklanishini bloklab qo'yishini oldini oladi",
             /* T41: Theming (3) */
             "<code>next-themes</code> qorong'i rejimni yuklashda nol miltillash bilan boshqaradi",
-            "Tailwind'ning <code>dark:</code> varianti uchun <code>attribute=\"class\"</code> ishlating",
+            'Tailwind\'ning <code>dark:</code> varianti uchun <code>attribute="class"</code> ishlating',
             "Tizim sozlamalari aniqlashni avtomatik qo'llab-quvvatlaydi",
             /* T42: Component libs (4) */
             "shadcn/ui komponentlarni <code>components/ui/</code> ga ko'chiradi — kod sizniki",
@@ -5709,7 +5718,7 @@ npm install next@latest react@latest react-dom@latest
             /* T44: Bundle analysis (4) */
             "Bundle'ingizni vizualizatsiya qilish uchun <code>ANALYZE=true npm run build</code> ishga tushiring",
             "Server komponentlari nol JS yuboradi — iloji boricha kodni klientdan olib tashlang",
-            "Tree-shaking uchun aniq importlar ishlating: <code>import { x } from \"lib\"</code>",
+            'Tree-shaking uchun aniq importlar ishlating: <code>import { x } from "lib"</code>',
             "Darhol kerak bo'lmagan katta komponentlarni lazy load qiling",
             /* T45: SEO (4) */
             "<code>sitemap.ts</code> va <code>robots.ts</code> standart URL'larda avtomatik beriladi",
@@ -5738,12 +5747,12 @@ npm install next@latest react@latest react-dom@latest
             "O'rnatilgan analitika, tezlik ko'rsatkichlari va Edge tarmog'i",
             "Muhit o'zgaruvchilari Vercel dashboardida sozlanadi",
             /* T50: Self-hosting (4) */
-            "<code>output: \"standalone\"</code> minimal, mustaqil build yaratadi",
+            '<code>output: "standalone"</code> minimal, mustaqil build yaratadi',
             "Docker ko'p bosqichli buildlar rasmni kichik saqlaydi (~100MB)",
             "Standalone server yoniga <code>.next/static</code> va <code>public/</code> ni ko'chiring",
             "Har qanday bulutda ishlaydi: AWS, GCP, Azure, DigitalOcean, Railway",
             /* T51: Static export (4) */
-            "<code>output: \"export\"</code> <code>/out</code> katalogida sof statik HTML yaratadi",
+            '<code>output: "export"</code> <code>/out</code> katalogida sof statik HTML yaratadi',
             "Har qanday CDN yoki statik hostga deploy qiling — Node.js server kerak emas",
             "Server xususiyatlari mavjud emas — faqat klient tomonida rendering",
             "Hujjatlar saytlari, landing sahifalar, bloglar uchun yaxshi",
@@ -5793,8 +5802,8 @@ npm install next@latest react@latest react-dom@latest
             "Har doim <code>npx @next/codemod@latest upgrade</code> ishlating — ko'p o'zgarishlarni avtomatlashtiradi",
             "Pages Router → App Router: bir vaqtda bitta sahifani migratsiya qiling, ikkalasi birga mavjud",
             "Yangilagandan keyin sinchiklab test qiling — ayniqsa keshlash xulqini",
-            "Har bir versiyaning o'ziga xos o'zgarishlari uchun rasmiy yangilash qo'llanmasini o'qing"
-          ]
+            "Har bir versiyaning o'ziga xos o'zgarishlari uchun rasmiy yangilash qo'llanmasini o'qing",
+          ],
         };
 
         /* ── Translation engine ── */
@@ -5809,7 +5818,9 @@ npm install next@latest react@latest react-dom@latest
             keyH4s: document.querySelectorAll(".key-points h4"),
             keyLis: document.querySelectorAll(".key-points li"),
             versionNotes: document.querySelectorAll(".version-note"),
-            paragraphs: document.querySelectorAll(".topic-content > p, .topic-content-inner > p")
+            paragraphs: document.querySelectorAll(
+              ".topic-content > p, .topic-content-inner > p",
+            ),
           };
         }
 
@@ -5890,34 +5901,49 @@ npm install next@latest react@latest react-dom@latest
             restoreArr(els.paragraphs, "p");
           }
 
-          try { localStorage.setItem("nextjs-course-lang", lang); } catch(ex){}
+          try {
+            localStorage.setItem("nextjs-course-lang", lang);
+          } catch (ex) {}
         }
 
         /* ── Toggle button handler ── */
         var langToggle = document.getElementById("langToggle");
         if (langToggle) {
-          langToggle.addEventListener("click", function(e) {
-            var btn = e.target.closest ? e.target.closest(".lang-btn") : null;
-            if (!btn) return;
-            var lang = btn.getAttribute("data-lang");
-            var btns = langToggle.querySelectorAll(".lang-btn");
-            for (var i = 0; i < btns.length; i++) btns[i].classList.remove("active");
-            btn.classList.add("active");
-            switchLang(lang);
-          }, false);
+          langToggle.addEventListener(
+            "click",
+            function (e) {
+              var btn = e.target.closest ? e.target.closest(".lang-btn") : null;
+              if (!btn) return;
+              var lang = btn.getAttribute("data-lang");
+              var btns = langToggle.querySelectorAll(".lang-btn");
+              for (var i = 0; i < btns.length; i++)
+                btns[i].classList.remove("active");
+              btn.classList.add("active");
+              switchLang(lang);
+            },
+            false,
+          );
         }
 
         /* ── Restore saved language ── */
         try {
           var savedLang = localStorage.getItem("nextjs-course-lang");
           if (savedLang === "uz") {
-            var uzBtn = langToggle ? langToggle.querySelector('[data-lang="uz"]') : null;
-            var enBtn = langToggle ? langToggle.querySelector('[data-lang="en"]') : null;
-            if (uzBtn) { uzBtn.classList.add("active"); }
-            if (enBtn) { enBtn.classList.remove("active"); }
+            var uzBtn = langToggle
+              ? langToggle.querySelector('[data-lang="uz"]')
+              : null;
+            var enBtn = langToggle
+              ? langToggle.querySelector('[data-lang="en"]')
+              : null;
+            if (uzBtn) {
+              uzBtn.classList.add("active");
+            }
+            if (enBtn) {
+              enBtn.classList.remove("active");
+            }
             switchLang("uz");
           }
-        } catch(ex){}
+        } catch (ex) {}
       })();
     </script>
   </body>
